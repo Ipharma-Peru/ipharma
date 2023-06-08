@@ -21,7 +21,8 @@ export default defineConfig({
                 "resources/js/app.js",
                 "resources/css/app.css",
                 "resources/sass/app.scss",
-                "resources/sass/pages/auth.scss"
+                "resources/sass/pages/auth.scss",
+                "resources/less/custom.less"
             ],
             refresh: true
         }),
