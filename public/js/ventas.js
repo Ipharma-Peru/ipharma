@@ -1,15 +1,44 @@
-$(() => {
-    $('#table1').DataTable({
-        "language": {
-            "url": "https://cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"
-        },
-        processing: true,
-        serverSide: true,
-        ajax: '/ventas',
-        columns: [
-            { data: 'id', name: 'id' },
-            { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' }
-        ]
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    removeSilderActive()
+    SliderMouseEvent()
 })
+
+const removeSilderActive = () => {
+    var currentURL = window.location.pathname
+    // Verifica si la URL coincide con la URL específica
+    if (currentURL === '/caja/ventas') {
+        // Selecciona el elemento "sidebar" y quita la clase "active"
+        var sidebarElement = document.getElementById('sidebar')
+        sidebarElement.classList.remove('active')
+    }
+}
+const SliderMouseEvent = () => {
+    const products = document.getElementById("ventasProducts");
+    const detail = document.getElementById("ventasDetail");
+
+    const toggleClasses = (element, class1, class2) => {
+        element.classList.toggle(class1);
+        element.classList.toggle(class2);
+    };
+
+    const applyTransition = (element) => {
+        element.style.transition = "width 0.3s";
+    };
+
+    products.addEventListener("mouseenter", () => {
+        applyTransition(products);
+        applyTransition(detail);
+        toggleClasses(products, "col-md-6", "col-md-8");
+        toggleClasses(detail, "col-md-6", "col-md-4");
+    });
+
+    products.addEventListener("mouseleave", () => {
+        applyTransition(products);
+        applyTransition(detail);
+        toggleClasses(products, "col-md-8", "col-md-6");
+        toggleClasses(detail, "col-md-4", "col-md-6");
+    });
+}
+
+
+
