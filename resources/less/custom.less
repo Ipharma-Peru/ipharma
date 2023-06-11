@@ -1,12 +1,28 @@
-header {
-    .navbar {
-        height: 90px;
+body.theme-dark,
+.theme-light {
+
+    @import 'component/switch.less';
+
+    header {
+        .navbar {
+            height: 90px;
+            padding: 1rem;
+        }
+    }
+
+    #main #main-content {
         padding: 1rem;
     }
-}
-#main #main-content {
-    padding: 1rem;
-}
-.card {
-    margin-bottom: 1rem;
+
+    .card {
+        margin-bottom: 1rem;
+
+        .card-header {
+            padding: 1rem 1rem;
+
+            * {
+                margin: 0;
+            }
+        }
+    }
 }

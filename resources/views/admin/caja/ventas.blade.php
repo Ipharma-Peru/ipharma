@@ -19,14 +19,15 @@
 
     <section class="section">
         <div class="row">
-            <div class="col-12 col-md-6" id="ventasDetail">
+            <div class="col-12 col-sm-12 col-lg-6" id="ventasDetail">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Factura</label>
+                    <div class="card-header d-flex flex-column flex-sm-row justify-content-sm-between align-items-center">
+                        <div class="custom-switch col-12 col-sm-6">
+                            <div class="btn-custom"></div>
+                            <button type="button" class="toggle-btn active">Boleta</button>
+                            <button type="button" class="toggle-btn">Factura</button>
                         </div>
-                        <h4 class="card-title">BO19819081098</h4>
+                        <h4 class="card-title col-12 col-sm-6 text-center text-sm-end">BO19819081098</h4>
                     </div>
                 </div>
                 <div class="card">
@@ -125,7 +126,7 @@
                 </div>
 
             </div>
-            <div class="col-12 col-md-6" id="ventasProducts">
+            <div class="col-12 col-sm-12 col-lg-6" id="ventasProducts">
                 <div class="card">
                     <div class="card-header d-flex flex-column justify-content-center align-items-center">
                         <h4 class="card-title">Artículo</h4>
