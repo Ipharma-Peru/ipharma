@@ -3,8 +3,11 @@
     <!-- Add Sidebar Menu Items Here -->
 
     <x-maz-sidebar-item name="Dashboard" :link="route('dashboard')" icon="bi bi-grid-fill"></x-maz-sidebar-item>
-    <x-maz-sidebar-item name="caja" icon="bi bi-cart4">
-        <x-maz-sidebar-sub-item name="apertura" :link="route('caja.apertura')"></x-maz-sidebar-sub-item>
+    <x-maz-sidebar-item name="Inventario" icon="bi bi-puzzle-fill">
+        <x-maz-sidebar-sub-item name="product" :link="route('inventario.product')"></x-maz-sidebar-sub-item>
+    </x-maz-sidebar-item>
+    <x-maz-sidebar-item name="Caja" icon="bi bi-cart4">
+        <x-maz-sidebar-sub-item name="ape   rtura" :link="route('caja.apertura')"></x-maz-sidebar-sub-item>
         <x-maz-sidebar-sub-item name="ventas" :link="route('caja.ventas')"></x-maz-sidebar-sub-item>
     </x-maz-sidebar-item>
     {{-- <x-maz-sidebar-item name="Component" icon="bi bi-stack">
