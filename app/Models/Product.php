@@ -38,7 +38,7 @@ class Product extends Model
 
     public function presentation()
     {
-        return $this->belongsTo('App\Models\Product');
+        return $this->belongsTo('App\Models\Presentation');
     }
 
     public function activeSubstances()
