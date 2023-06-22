@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('inventories', function (Blueprint $table) {
+        Schema::create('product_pharma_action', function (Blueprint $table) {
             $table->id();
-            $table->integer('stock');
-            $table->boolean('deleted')->default(false);
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
-            $table->foreignId('lot_id')->constrained()->restrictOnDelete();
+            $table->foreignId('pharma_action_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventories');
+        Schema::dropIfExists('product_pharma_action');
     }
 };

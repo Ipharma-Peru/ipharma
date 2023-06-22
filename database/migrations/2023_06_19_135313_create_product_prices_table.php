@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('product_prices', function (Blueprint $table) {
             $table->id();
-            $table->decimal('precio_unidad', 4, 2);
+            $table->decimal('precio_unidad', 4, 2)->nullable();
             $table->decimal('precio_blister', 4, 2)->nullable();
-            $table->decimal('precio_caja', 4, 2)->nullable();
+            $table->decimal('precio_caja', 4, 2);
             $table->boolean('activo')->default(true);
             $table->boolean('deleted')->default(false);
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
