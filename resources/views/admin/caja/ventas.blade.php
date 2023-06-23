@@ -121,19 +121,19 @@
                                 <label for="">Sub total</label>
                                 <h5 class="ps-5">S/ 0.00</h5>
                             </div>
-                             <div class="igv d-flex">
+                            <div class="igv d-flex">
                                 <label for="">I.G.V </label>
                                 <h5 class="ps-5">S/ 0.00</h5>
                             </div>
-                             <div class="otro d-flex">
+                            <div class="otro d-flex">
                                 <label for="">Otro tributo</label>
                                 <h5 class="ps-5">S/ 0.00</h5>
                             </div>
-                             <div class="sub-total d-flex">
+                            <div class="sub-total d-flex">
                                 <h5 for="">Total</h5>
                                 <h5 class="ps-5">S/ 0.00</h5>
                             </div>
-                             <div class="otro d-flex">
+                            <div class="otro d-flex">
                                 <label for="">Redondeo</label>
                                 <h5 class="ps-5">S/ 0.00</h5>
                             </div>
@@ -142,219 +142,14 @@
                                 <h5 class="ps-5">S/ 0.00</h5>
                             </div>
 
-                            
+
                         </div>
                     </div>
                 </div>
 
             </div>
             <div class="col-12 col-sm-12 col-lg-6" id="ventasProducts">
-                <div class="card">
-                    <div class="card-header d-flex flex-column justify-content-center align-items-center">
-                        {{-- <h4 class="card-title">Artículo</h4> --}}
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="articulo" placeholder="Artículo">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-
-                        <div class="table-responsive search">
-                            <div class="d-flex justify-content-between align-self-center">
-                                <h5 class="">Artículo</h5>
-                                <h5 class="">Laboratorio</h5>
-                            </div>
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Artículo</th>
-                                        <th>Laboratorio</th>
-                                        <th>PVPx</th>
-                                        <th>PVPX blister</th>
-                                        <th>PVPx fracción</th>
-                                        <th>Pol. Dcto. add.</th>
-                                        <th>Stock</th>
-                                        <th>Estado</th>
-                                        <th>Incentivo</th>
-                                        <th>Presentación</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="table-responsive generico mt-3">
-                            <div class="d-flex justify-content-between align-self-center">
-                                <h5 class="">Generico</h5>
-                                <h5 class="">Laboratorio</h5>
-                            </div>
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Artículo</th>
-                                        <th>Laboratorio</th>
-                                        <th>PVPx</th>
-                                        <th>PVPX blister</th>
-                                        <th>PVPx fracción</th>
-                                        <th>Pol. Dcto. add.</th>
-                                        <th>Stock</th>
-                                        <th>Estado</th>
-                                        <th>Incentivo</th>
-                                        <th>Presentación</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="table-responsive mt-3 comercial">
-                            <div class="d-flex justify-content-between align-self-center">
-                                <h5 class="">Comercial</h5>
-                                <h5 class="">Laboratorio</h5>
-                            </div>
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Artículo</th>
-                                        <th>Laboratorio</th>
-                                        <th>PVPx</th>
-                                        <th>PVPX blister</th>
-                                        <th>PVPx fracción</th>
-                                        <th>Pol. Dcto. add.</th>
-                                        <th>Stock</th>
-                                        <th>Estado</th>
-                                        <th>Incentivo</th>
-                                        <th>Presentación</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-bold-700">1111111</td>
-                                        <td>$15/hr</td>
-                                        <td class="text-bold-500">UI/UX</td>
-                                        <td>Remote</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                        <td>Austin,Taxes</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
+                <livewire:caja.venta />
             </div>
         </div>
         </div>
