@@ -3,6 +3,10 @@ body.theme-dark,
 
     @import 'component/switch.less';
 
+    .custom-modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+
     header {
         .navbar {
             height: 90px;
@@ -20,8 +24,46 @@ body.theme-dark,
         .card-header {
             padding: 1rem 1rem;
 
-            * {
-                margin: 0;
+            // * {
+            //     margin: 0;
+            // }
+        }
+
+        .card-body {
+            .table-responsive.search {
+                border-radius: 10px;
+
+                .scrollable-table {
+                    height: 25vh;
+                }
+
+                .sticky-thead {
+                    position: sticky;
+                    top: 0;
+                    background-color: #435ebe;
+                    color: #fff
+                }
+
+                table {
+                    thead {
+                        tr {
+                            th {
+                                // padding: auto 4px;
+                            }
+                        }
+                    }
+
+                    tbody {
+                        tr {
+                            td {
+                                padding: 0 8px;
+                                font-size: 10px;
+                                cursor: pointer;
+                            }
+                        }
+
+                    }
+                }
             }
         }
     }
