@@ -1,6 +1,6 @@
 @props(['href','logo', 'title' => 'Menu'])
 
-<div id="sidebar" class="active">
+<div id="sidebar">
     <div class="sidebar-wrapper active">
 
 
