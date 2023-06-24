@@ -1,6 +1,8 @@
 import { defineConfig, normalizePath } from 'vite';
-import {resolve} from 'path';
+import { resolve } from 'path';
 import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
+
 const path = require('path')
  
 export default defineConfig({
@@ -25,6 +27,14 @@ export default defineConfig({
                 "resources/less/custom.less"
             ],
             refresh: true
+        }),
+        vue({
+            template: {
+                transformAssetUrls: {
+                    base: null,
+                    includeAbsolute:false,
+                }
+            }
         }),
     ],
 });

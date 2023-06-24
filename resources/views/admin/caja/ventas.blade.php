@@ -149,7 +149,10 @@
 
             </div>
             <div class="col-12 col-sm-12 col-lg-6" id="ventasProducts">
-                <livewire:caja.venta />
+                {{-- <livewire:caja.venta /> --}}
+                <h1>Hola</h1>
+                <div class="" id="ventas"></div>
+                {{-- @vite('resources/js/app.js') --}}
             </div>
         </div>
         </div>
