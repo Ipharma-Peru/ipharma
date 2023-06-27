@@ -9,32 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class VentaController extends Controller
 {
-    public function getProducts(Request $request)
-    {
-        $search = $request->search;
-        return Product::join('presentations', 'presentations.id','products.presentation_id')
-        ->join('product_prices','product_prices.id','products.id')
-        ->join('laboratories','laboratories.id','products.laboratory_id')
-        ->join('inventories','inventories.product_id','products.id')
-        ->join('lots','inventories.lot_id','lots.id')
-        ->select(
-            'products.codigo',
-            'products.descripcion',
-            'products.activo',
-            'presentations.presentacion',
-            'product_prices.precio_unidad',
-            'product_prices.precio_blister',
-            'product_prices.precio_caja',
-            'laboratories.nombre_laboratorio',
-            'inventories.stock',
-            'lots.numero_lote'
-            )
-        ->where('products.descripcion','like', '%'. $search .'%')
-        ->where('products.deleted',0)
-        ->where('presentations.deleted',0)
-        ->where('product_prices.deleted',0)
-        ->get();
-    }
+
 
     public function getProductsByCode(Request $request)
     {

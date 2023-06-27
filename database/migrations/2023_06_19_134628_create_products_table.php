@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('codigo', 30);
             $table->string('descripcion', 250);
-            $table->boolean('activo');
+            $table->boolean('activo')->default(true);
+            $table->boolean('fraccionable')->default(false);
             $table->boolean('deleted')->default(false);
             $table->foreignId('presentation_id')->constrained()->restrictOnDelete();
             $table->foreignId('laboratory_id')->constrained()->restrictOnDelete();
