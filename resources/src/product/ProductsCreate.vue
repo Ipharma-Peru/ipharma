@@ -8,7 +8,7 @@
           <router-link to="/inventario/products">Back to List</router-link>
         </div>
         <div class="card-body">
-          <form @submit="enviarFormulario">
+          <form @submit.prevent="enviarFormulario(event)" ref="formCreate">
             <div class="row">
               <div class="col-8">
                 <div class="form-group">
@@ -165,10 +165,21 @@
                         {{ presentacion.presentacion }}
                       </option>
                     </select>
-                    <button class="btn btn-primary" type="button">+</button>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#presentation"
+                    >
+                      +
+                    </button>
                   </div>
                 </fieldset>
               </div>
+              <PresentationPopup
+                @laboratorioAgregado="agregarLaboratorio"
+                @close="cerrarPopup"
+              />
               <div class="col-6">
                 <label for="laboratorio" class="form-label">Laboratorio</label>
                 <fieldset>
@@ -199,13 +210,13 @@
                 </fieldset>
               </div>
               <!-- Agrega el componente LaboratorioPopup en el mismo archivo -->
-              <LaboratorioPopup
+              <LaboratoryPopup
                 @laboratorioAgregado="agregarLaboratorio"
                 @close="cerrarPopup"
               />
             </div>
 
-            <div class="row">
+            <div class="row mt-3">
               <div class="col-6">
                 <label for="principioActivo" class="form-label"
                   >Principio Activo</label
@@ -254,7 +265,7 @@
             <div class="row mt-3">
               <div class="col-6">
                 <div class="buttons">
-                  <button class="btn btn-outline-primary block">
+                  <button type="submit" class="btn btn-outline-primary block">
                     <i class="bi bi-pencil"></i> Guardar
                   </button>
                 </div>
@@ -267,13 +278,15 @@
   </div>
 </template>
 <script>
-import LaboratorioPopup from "./popup/LaboratorioPopup.vue";
+import LaboratoryPopup from "./popup/LaboratoryPopup.vue";
+import PresentationPopup from "./popup/PresentationPopup.vue";
 import axios from "axios";
 import Multiselect from "vue-multiselect";
 
 export default {
   components: {
-    LaboratorioPopup,
+    LaboratoryPopup,
+    PresentationPopup,
     Multiselect,
   },
   data() {
@@ -343,24 +356,32 @@ export default {
           console.error("Error al obtener los datos:", error);
         });
     },
-    enviarFormulario() {
-      console.log(this.formData);
-      debugger;
-      // axios
-      //   .post("/ruta-de-tu-api", this.formData)
-      //   .then((response) => {
-      //     // Lógica para manejar la respuesta
-      //   })
-      //   .catch((error) => {
-      //     // Lógica para manejar el error
-      //   });
+    enviarFormulario(event) {
+      const formData = {
+        description: this.$refs.formCreate.descripcion.value,
+        selectedClass: this.$refs.formCreate.clase.value,
+        selectedSubclase: this.$refs.formCreate.subclase.value,
+        fraccionable: this.$refs.formCreate.fraccionable.checked,
+        unidadesByCaja: this.$refs.formCreate.unidadCaja.value,
+        unidadesByBlister: this.$refs.formCreate.unidadBlister.value,
+        pvpx: this.$refs.formCreate.pvpX.value,
+        pvpBlister: this.$refs.formCreate.pvpBlister.value,
+        pvpFraccion: this.$refs.formCreate.pvpFraccion.value,
+        selectedPresentacion: this.$refs.formCreate.presentacion.value,
+        selectedLaboratorio: this.$refs.formCreate.laboratorio.value,
+        selectedPrincipios: this.formData.selectedPrincipios,
+        selectedactionPharma: this.formData.selectedactionPharma,
+      };
+      console.log(formData);
+      axios
+        .post("/ruta-de-tu-api", formData)
+        .then((response) => {
+          // Lógica para manejar la respuesta de la solicitud
+        })
+        .catch((error) => {
+          // Lógica para manejar el error de la solicitud
+        });
     },
   },
 };
 </script>
-<style scoped>
-.multiselect__tags {
-  min-height: 33.19px !important;
-  padding: 5px !important;
-}
-</style>

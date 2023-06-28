@@ -11,8 +11,6 @@
 </template>
 
 <script>
-import LaboratorioPopup from './LaboratorioPopup.vue';
-import Choices from 'choices.js';
 
 
 export default {
