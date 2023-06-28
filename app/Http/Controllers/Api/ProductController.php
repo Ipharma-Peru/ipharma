@@ -10,7 +10,10 @@ use App\Models\Laboratory;
 use App\Models\ProductSubclass;
 use App\Models\ActiveSubstance;
 use App\Models\PharmaAction;
+use App\Models\PresentationDetail;
 use App\Models\Product;
+use App\Models\ProductPrice;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -87,5 +90,66 @@ class ProductController extends Controller
         ->where('presentations.deleted',0)
         ->where('product_prices.deleted',0)
         ->get();
+    }
+
+    public function store(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $product = new Product;
+            $product->codigo = $this->generateProductCode();
+            $product->descripcion = $request->description;
+            $product->activo = true;
+            $product->fraccionable = $request->fraccionable;
+            $product->deleted = false;
+            $product->presentation_id = $request->selectedPresentacion;
+            $product->laboratory_id = $request->selectedLaboratorio;
+            $product->product_subclass_id = $request->selectedSubclase;
+            $product->save();
+
+            $productId = $product->id;
+            $price = new ProductPrice();
+            $price->precio_caja = $request->pvpx;
+            $price->precio_blister = $request->pvpBlister;
+            $price->precio_unidad = $request->pvpFraccion;
+            $price->activo = true;
+            $price->deleted = false;
+            $price->product_id = $productId;
+            $price->save();
+
+            $presentation = new PresentationDetail();
+            $presentation->unidades_por_caja = $request->unidadesByCaja;
+            $presentation->unidades_por_blister = $request->unidadesByBlister;
+            $presentation->deleted = false;
+            $presentation->product_id = $productId;
+            $presentation->save();
+
+            $idPrincipios = array_column($request->selectedPrincipios,'id');
+            $idFarmacologicas = array_column($request->selectedactionPharma,'id');
+            $product->activeSubstances()->attach($idPrincipios);
+            $product->pharmaActions()->attach($idFarmacologicas);
+
+            DB::commit();
+            return ['status' => true];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $errorMessage = $e->getMessage();
+            $errorCode = $e->getCode();
+
+            return [
+                'status' => false,
+                'message' => $errorMessage,
+                'code' => $errorCode
+            ];
+        }
+    }
+
+    public function generateProductCode()
+    {
+        $code = Product::where('deleted', 0)->select('codigo')->orderBy('codigo', 'DESC')->first();
+        $code = (int)$code->codigo + 1;
+        $code = str_pad($code, 8, '0', STR_PAD_LEFT);
+        return $code;
     }
 }

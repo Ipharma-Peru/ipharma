@@ -83,7 +83,7 @@ export default {
       console.log(this.codeLaboratory,this.nameLaboratory);
       debugger;
       axios
-        .post("/api/agregarLaboratorio", {
+        .post("/api/addlaboratory", {
           nombre_laboratorio: this.nameLaboratory,
           codigo: this.codeLaboratory,
         })

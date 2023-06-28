@@ -396,7 +396,7 @@ export default {
       };
       console.log(formData);
       axios
-        .post("/ruta-de-tu-api", formData)
+        .post("/api/registerproduct", formData)
         .then((response) => {
           // Lógica para manejar la respuesta de la solicitud
         })
