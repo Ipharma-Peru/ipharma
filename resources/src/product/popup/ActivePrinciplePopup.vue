@@ -75,7 +75,7 @@ export default {
       console.log(this.nameactivePrinciple)
        debugger
       axios
-        .post("/api/agregaractivePrinciple", { nombre_activePrinciple: this.nameactivePrinciple })
+        .post("/api/agregaractivePrinciple", { nombre: this.nameactivePrinciple })
         .then((response) => {
           // Aquí puedes manejar la respuesta de la solicitud
           // Puedes emitir un evento para enviar los datos del activePrinciple agregado a tu componente padre
