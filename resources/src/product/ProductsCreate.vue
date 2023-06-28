@@ -165,10 +165,21 @@
                         {{ presentacion.presentacion }}
                       </option>
                     </select>
-                    <button class="btn btn-primary" type="button">+</button>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#presentation"
+                    >
+                      +
+                    </button>
                   </div>
                 </fieldset>
               </div>
+              <PresentationPopup
+                @laboratorioAgregado="agregarLaboratorio"
+                @close="cerrarPopup"
+              />
               <div class="col-6">
                 <label for="laboratorio" class="form-label">Laboratorio</label>
                 <fieldset>
@@ -199,13 +210,13 @@
                 </fieldset>
               </div>
               <!-- Agrega el componente LaboratorioPopup en el mismo archivo -->
-              <LaboratorioPopup
+              <LaboratoryPopup
                 @laboratorioAgregado="agregarLaboratorio"
                 @close="cerrarPopup"
               />
             </div>
 
-            <div class="row">
+            <div class="row mt-3">
               <div class="col-6">
                 <label for="principioActivo" class="form-label"
                   >Principio Activo</label
@@ -267,13 +278,15 @@
   </div>
 </template>
 <script>
-import LaboratorioPopup from "./popup/LaboratorioPopup.vue";
+import LaboratoryPopup from "./popup/LaboratoryPopup.vue";
+import PresentationPopup from "./popup/PresentationPopup.vue";
 import axios from "axios";
 import Multiselect from "vue-multiselect";
 
 export default {
   components: {
-    LaboratorioPopup,
+    LaboratoryPopup,
+    PresentationPopup,
     Multiselect,
   },
   data() {
