@@ -8,7 +8,7 @@
           <router-link to="/inventario/products">Back to List</router-link>
         </div>
         <div class="card-body">
-          <form @submit="enviarFormulario">
+          <form @submit.prevent="enviarFormulario(event)" ref="formCreate">
             <div class="row">
               <div class="col-8">
                 <div class="form-group">
@@ -265,7 +265,7 @@
             <div class="row mt-3">
               <div class="col-6">
                 <div class="buttons">
-                  <button class="btn btn-outline-primary block">
+                  <button type="submit" class="btn btn-outline-primary block">
                     <i class="bi bi-pencil"></i> Guardar
                   </button>
                 </div>
@@ -356,24 +356,32 @@ export default {
           console.error("Error al obtener los datos:", error);
         });
     },
-    enviarFormulario() {
-      console.log(this.formData);
-      debugger;
-      // axios
-      //   .post("/ruta-de-tu-api", this.formData)
-      //   .then((response) => {
-      //     // Lógica para manejar la respuesta
-      //   })
-      //   .catch((error) => {
-      //     // Lógica para manejar el error
-      //   });
+    enviarFormulario(event) {
+      const formData = {
+        description: this.$refs.formCreate.descripcion.value,
+        selectedClass: this.$refs.formCreate.clase.value,
+        selectedSubclase: this.$refs.formCreate.subclase.value,
+        fraccionable: this.$refs.formCreate.fraccionable.checked,
+        unidadesByCaja: this.$refs.formCreate.unidadCaja.value,
+        unidadesByBlister: this.$refs.formCreate.unidadBlister.value,
+        pvpx: this.$refs.formCreate.pvpX.value,
+        pvpBlister: this.$refs.formCreate.pvpBlister.value,
+        pvpFraccion: this.$refs.formCreate.pvpFraccion.value,
+        selectedPresentacion: this.$refs.formCreate.presentacion.value,
+        selectedLaboratorio: this.$refs.formCreate.laboratorio.value,
+        selectedPrincipios: this.formData.selectedPrincipios,
+        selectedactionPharma: this.formData.selectedactionPharma,
+      };
+      console.log(formData);
+      axios
+        .post("/ruta-de-tu-api", formData)
+        .then((response) => {
+          // Lógica para manejar la respuesta de la solicitud
+        })
+        .catch((error) => {
+          // Lógica para manejar el error de la solicitud
+        });
     },
   },
 };
 </script>
-<style scoped>
-.multiselect__tags {
-  min-height: 33.19px !important;
-  padding: 5px !important;
-}
-</style>
