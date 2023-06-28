@@ -234,11 +234,22 @@
                       ></multiselect>
                     </div>
                     <div class="col-1 m-0 text-end">
-                      <button class="btn btn-primary" type="button">+</button>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#activePrinciple"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 </fieldset>
               </div>
+              <ActivePrinciplePopup
+                @laboratorioAgregado="agregarLaboratorio"
+                @close="cerrarPopup"
+              />
               <div class="col-6">
                 <label for="accionFarmacologica" class="form-label"
                   >Acción Farmacológica</label
@@ -256,11 +267,18 @@
                       ></multiselect>
                     </div>
                     <div class="col-1 m-0 text-end">
-                      <button class="btn btn-primary" type="button">+</button>
+                      <button type="button"
+                      class="btn btn-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#pharmaAction">+</button>
                     </div>
                   </div>
                 </fieldset>
               </div>
+              <PharmaActionPopup
+                @laboratorioAgregado="agregarLaboratorio"
+                @close="cerrarPopup"
+              />
             </div>
             <div class="row mt-3">
               <div class="col-6">
@@ -280,6 +298,8 @@
 <script>
 import LaboratoryPopup from "./popup/LaboratoryPopup.vue";
 import PresentationPopup from "./popup/PresentationPopup.vue";
+import PharmaActionPopup from "./popup/PharmaActionPopup.vue";
+import ActivePrinciplePopup from "./popup/ActivePrinciplePopup.vue";
 import axios from "axios";
 import Multiselect from "vue-multiselect";
 
@@ -288,6 +308,8 @@ export default {
     LaboratoryPopup,
     PresentationPopup,
     Multiselect,
+    PharmaActionPopup,
+    ActivePrinciplePopup
   },
   data() {
     return {
