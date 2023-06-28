@@ -3,8 +3,9 @@
     <!-- Add Sidebar Menu Items Here -->
 
     <x-maz-sidebar-item name="Dashboard" :link="route('dashboard')" icon="bi bi-grid-fill"></x-maz-sidebar-item>
+    <x-maz-sidebar-item name="Blogs" :link="route('blogs')" icon="bi bi-grid-fill"></x-maz-sidebar-item>
     <x-maz-sidebar-item name="Inventario" icon="bi bi-puzzle-fill">
-        <x-maz-sidebar-sub-item name="product" :link="route('inventario.product')"></x-maz-sidebar-sub-item>
+        <x-maz-sidebar-sub-item name="Productos" :link="route('inventario.products')"></x-maz-sidebar-sub-item>
     </x-maz-sidebar-item>
     <x-maz-sidebar-item name="Caja" icon="bi bi-cart4">
         <x-maz-sidebar-sub-item name="ape   rtura" :link="route('caja.apertura')"></x-maz-sidebar-sub-item>

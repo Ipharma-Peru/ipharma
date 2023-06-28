@@ -66,6 +66,7 @@
                     <th class="col-1">Cantidad</th>
                     <th class="col-1">P. X</th>
                     <th class="col-1">Total</th>
+                    <th class="col-1">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -87,7 +88,7 @@
                       </div>
                     </td>
                     <td>
-                      <div class=" form-group m-0">
+                      <div class="form-group m-0">
                         <input
                           type="text"
                           @input="updateProduct(index)"
@@ -105,6 +106,11 @@
                       }}
                     </td>
                     <td>{{ calculateTotalPrice(product) }}</td>
+                    <td>
+                      <button class="btn icon btn-primary btn-sm" @click="removeProduct(index)">
+                        <i class="bi bi-trash-fill"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -300,9 +306,7 @@ export default {
       selectedProducts: [],
     };
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
     fetchProducts() {
       axios
@@ -366,6 +370,10 @@ export default {
     toggleProductSelection(product, index) {
       product.selected = !product.selected; // Invierte el estado de la propiedad 'selected'
       this.updateProduct(index);
+    },
+    removeProduct(index) {
+      this.selectedProducts.splice(index, 1);
+      // this.calculateInvoiceTotals(); // Actualiza los totales después de eliminar el ítem
     },
   },
 };

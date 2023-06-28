@@ -16,10 +16,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+    Route::get('/blogs', function () {
+        return view('blogs');
+    })->name('blogs');
     // Route::group(['prefix' => 'components', 'as' => 'components.'], function() {
     //     Route::get('/alert', function () {
     //         return view('admin.component.alert');
@@ -37,8 +41,14 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
         })->name('ventas');
     });
     Route::group(['prefix' => 'inventario', 'as' => 'inventario.'], function() {
-        Route::get('/product', function () {
-            return view('admin.inventory.product.list');
-        })->name('product');
+        Route::get('/products', function () {
+            return view('admin.inventory.products');
+        })->name('products');
+        Route::get('/{any}', function () {
+            return view('admin.inventory.products');
+        })->where('any', '.*');
     });
+    // Route::get('/{any}', function () {
+    //     return view('blogs');
+    // })->where('any', '.*');
 });
