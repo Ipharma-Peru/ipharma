@@ -73,9 +73,8 @@ export default {
     addPresentation() {
       // Realizar la solicitud POST con axios
       console.log(this.namePresentation)
-       debugger
       axios
-        .post("/api/addPresentation", { presentacion: this.namePresentation })
+        .post("/api/addpresentation", { presentacion: this.namePresentation })
         .then((response) => {
           // Aquí puedes manejar la respuesta de la solicitud
           // Puedes emitir un evento para enviar los datos del laboratorio agregado a tu componente padre

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('product_pharma_action', function (Blueprint $table) {
+        Schema::create('pharma_action_product', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
             $table->foreignId('pharma_action_id')->constrained()->restrictOnDelete();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_pharma_action');
+        Schema::dropIfExists('pharma_action_product');
     }
 };
