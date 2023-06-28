@@ -23,6 +23,17 @@
           <form>
             <div class="mb-3">
               <label for="recipient-laboratory" class="col-form-label"
+                >Código:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="recipient-laboratory"
+                v-model="codeLaboratory"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="recipient-laboratory" class="col-form-label"
                 >Laboratorio:</label
               >
               <input
@@ -43,11 +54,7 @@
           >
             Close
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="addLAboratory"
-          >
+          <button type="button" class="btn btn-primary" @click="addLAboratory">
             Guardar
           </button>
         </div>
@@ -63,6 +70,7 @@ export default {
   data() {
     return {
       nameLaboratory: "",
+      codeLaboratory: "",
     };
   },
   methods: {
@@ -72,10 +80,13 @@ export default {
     },
     addLAboratory() {
       // Realizar la solicitud POST con axios
-      console.log(this.nameLaboratory)
-       debugger
+      console.log(this.codeLaboratory,this.nameLaboratory);
+      debugger;
       axios
-        .post("/api/agregarLaboratorio", { nombre_laboratorio: this.nameLaboratory })
+        .post("/api/agregarLaboratorio", {
+          nombre_laboratorio: this.nameLaboratory,
+          codigo: this.codeLaboratory,
+        })
         .then((response) => {
           // Aquí puedes manejar la respuesta de la solicitud
           // Puedes emitir un evento para enviar los datos del laboratorio agregado a tu componente padre

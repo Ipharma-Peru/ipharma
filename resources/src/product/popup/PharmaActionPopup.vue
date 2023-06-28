@@ -75,7 +75,7 @@ export default {
       console.log(this.namepharmaAction)
        debugger
       axios
-        .post("/api/agregarpharmaAction", { nombre_pharmaAction: this.namepharmaAction })
+        .post("/api/agregarpharmaAction", { nombre: this.namepharmaAction })
         .then((response) => {
           // Aquí puedes manejar la respuesta de la solicitud
           // Puedes emitir un evento para enviar los datos del pharmaAction agregado a tu componente padre
