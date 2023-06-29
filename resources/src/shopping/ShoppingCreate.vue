@@ -4,51 +4,31 @@
       <div class="card">
         <div class="card-header">
           <h3>Crear Compra</h3>
-          <div>
-            <label for="autocomplete">Selecciona un artículo:</label>
-            <input
-              id="autocomplete"
-              class="form-control"
-              type="text"
-              v-model="selectedItem"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-            <ul v-show="showSuggestions" class="list-group">
-              <li
-                v-for="option in filteredOptions"
-                :key="option.id"
-                class="list-group-item"
-                @click="selectItem(option)"
-              >
-                {{ option.nombre }}
-              </li>
-            </ul>
-            <p>Artículo seleccionado: {{ selectedItem }}</p>
-          </div>
-
-          <router-link to="/inventario/shopping">Back to List</router-link>
+          <router-link to="/inventario/shopping"
+            >Regresar a Compras</router-link
+          >
         </div>
 
         <div class="card-body">
           <form @submit.prevent="addData">
             <div class="row">
-              <div class="col-md-6">
-                <div class="form-floating mb-3">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="proveedor" class="form-label">Proveedor</label>
                   <input
                     type="text"
                     class="form-control"
-                    id="proveedores"
+                    id="proveedor"
                     v-model="formData.proveedores"
-                    placeholder="Proveedores"
+                    placeholder="Proveedor"
                   />
-                  <label for="proveedores">Proveedores</label>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6">
-                <div class="form-floating mb-3">
+                <div class="form-group">
+                  <label for="factura" class="form-label">Factura</label>
                   <input
                     type="text"
                     class="form-control"
@@ -56,11 +36,13 @@
                     v-model="formData.factura"
                     placeholder="Factura"
                   />
-                  <label for="factura">Factura</label>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-floating mb-3">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="fechaFactura" class="form-label"
+                    >Fecha de Factura</label
+                  >
                   <input
                     type="date"
                     class="form-control"
@@ -68,80 +50,111 @@
                     v-model="formData.fechaFactura"
                     placeholder="Fecha de Factura"
                   />
-                  <label for="fechaFactura">Fecha de Factura</label>
                 </div>
               </div>
             </div>
-            <div class="container">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>Acciones</th>
-                    <th>Artículo</th>
-                    <th>Lote</th>
-                    <th>Fecha</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, index) in items" :key="index">
-                    <td>
-                      <button class="btn btn-danger" @click="removeRow(index)">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        class="form-control"
-                        v-model="item.articulo"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        class="form-control"
-                        v-model="item.lote"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="date"
-                        class="form-control"
-                        v-model="item.fecha"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        class="form-control"
-                        v-model="item.cantidad"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        class="form-control"
-                        v-model="item.precio"
-                      />
-                    </td>
-                    <td>
-                      <label>{{ calcularTotal(item) }}</label>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan="7">
-                      <button class="btn btn-primary" @click.prevent="addRow">
-                        Agregar fila
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="row">
+              <div class="container">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th class="col-1">Acciones</th>
+                      <th class="col-3">Artículo</th>
+                      <th class="col-1">Lote</th>
+                      <th class="col-1">Fecha</th>
+                      <th class="col-1">Cantidad</th>
+                      <th class="col-1">Precio</th>
+                      <th class="col-1">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, index) in items" :key="index">
+                      <td>
+                        <button
+                          class="btn btn-danger"
+                          @click="removeRow(index)"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <div class="autocomplete-container">
+                          <input
+                            class="form-control"
+                            type="text"
+                            v-model="item.articulo"
+                            @input="handleInput(item)"
+                            @blur="handleBlur(item)"
+                          />
+                          <ul
+                            v-show="item.showSuggestions"
+                            class="list-group autocomplete-list"
+                          >
+                            <li
+                              v-for="option in item.options"
+                              :key="option.id"
+                              class="list-group-item"
+                              @click="selectItem(option, item)"
+                            >
+                              {{ option.nombre }}
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          v-model="item.lote"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          class="form-control"
+                          v-model="item.fecha"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control"
+                          v-model="item.cantidad"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control"
+                          v-model="item.precio"
+                        />
+                      </td>
+                      <td>
+                        <label>{{ calcularTotal(item) }}</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="7">
+                        <button
+                          class="btn btn-outline-primary block"
+                          @click.prevent="addRow"
+                          :disabled="!areAllRowsComplete"
+                        >
+                          Agregar fila
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
 
-              <button type="submit">Enviar</button>
+                <button
+                  class="btn btn-primary"
+                  :disabled="!areAllFieldsFilled"
+                  type="submit"
+                >
+                  Enviar
+                </button>
+              </div>
             </div>
           </form>
         </div>
@@ -150,14 +163,9 @@
   </div>
 </template>
 <script>
-// import VueAutosuggest from "vue-autosuggest";
 import axios from "axios";
-// import { removeAccents } from "vue-autosuggest";
 
 export default {
-  components: {
-    // VueAutosuggest,
-  },
   data() {
     return {
       selectedItem: "",
@@ -171,6 +179,9 @@ export default {
           fecha: "",
           cantidad: "",
           precio: "",
+          showSuggestions: "",
+          optionSelected: "",
+          codigoArticulo: "",
         },
       ],
       formData: {
@@ -187,6 +198,24 @@ export default {
         removeAccents(option.nombre.toLowerCase()).includes(searchTerm)
       );
     },
+    areAllRowsComplete() {
+      return this.items.every((item) => {
+        return Object.values(item).every((value) => value !== "");
+      });
+    },
+    areAllFieldsFilled() {
+      const itemsFieldsFilled =
+        this.items.length > 0 &&
+        this.items.every((item) => {
+          return Object.values(item).every((value) => value !== "");
+        });
+
+      const formDataFieldsFilled = Object.values(this.formData).every(
+        (value) => value !== ""
+      );
+
+      return itemsFieldsFilled && formDataFieldsFilled;
+    },
   },
   mounted() {},
   watch: {
@@ -197,22 +226,20 @@ export default {
     },
   },
   methods: {
-    addRow() {
-      this.items.push({
-        articulo: "",
-        lote: "",
-        fecha: "",
-        cantidad: "",
-        precio: "",
-      });
-    },
     addData() {
       // Recopilar los datos de la tabla y formData
       const datos = {
-        items: this.items,
-        formData: this.formData,
+        items: this.items.map((item) => ({
+          articulo: item.articulo,
+          lote: item.lote,
+          fecha: item.fecha,
+          cantidad: item.cantidad,
+          precio: item.precio,
+          codigoArticulo: item.codigoArticulo, // Agregar el código del artículo
+        })),
+        proveedor: this.formData,
       };
-      console.log(this.items);
+      console.log(datos);
       debugger;
       axios
         .post("URL_DEL_ENDPOINT", datos)
@@ -225,41 +252,58 @@ export default {
           console.error(error);
         });
     },
-    removeRow(index) {
-      this.items.splice(index, 1);
+    handleInput(item) {
+      item.showSuggestions = item.articulo.length >= 3;
+      this.fetchOptions(item);
     },
-    calcularTotal(item) {
-      return item.cantidad * item.precio;
-    },
-
-    // Metodos para Auselect
-    handleInput() {
-      this.showSuggestions = this.selectedItem.length >= 3;
-    },
-    handleBlur() {
+    handleBlur(item) {
       setTimeout(() => {
-        if (!this.optionSelected) {
-          this.showSuggestions = false;
+        if (!item.optionSelected) {
+          item.showSuggestions = false;
         }
-        this.optionSelected = false;
+        item.optionSelected = false;
       }, 200);
     },
-    selectItem(option) {
-      this.selectedItem = option.nombre;
-      this.showSuggestions = false;
+    selectItem(option, item) {
+      item.articulo = option.nombre;
+      item.showSuggestions = false;
+      item.optionSelected = true;
+      item.codigoArticulo = option.id;
     },
-    fetchOptions() {
+    fetchOptions(item) {
       axios
-        .post("/api/products", { search: this.selectedItem })
+        .post("/api/products", {
+          search: item.articulo.toLowerCase(),
+        })
         .then((response) => {
-          this.options = response.data.map((product) => ({
+          item.options = response.data.map((product) => ({
             nombre: product.descripcion,
             id: product.codigo,
+            // uniqueId: `${item.articulo}-${index}`,
           }));
         })
         .catch((error) => {
           console.error(error);
         });
+    },
+    addRow() {
+      if (this.areAllRowsComplete) {
+        this.items.push({
+          articulo: "",
+          lote: "",
+          fecha: "",
+          cantidad: "",
+          precio: "",
+          showSuggestions: false,
+          optionSelected: false,
+        });
+      }
+    },
+    removeRow(index) {
+      this.items.splice(index, 1);
+    },
+    calcularTotal(item) {
+      return item.cantidad * item.precio;
     },
   },
 };
@@ -267,3 +311,18 @@ function removeAccents(text) {
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 </script>
+<style scoped>
+.autocomplete-container {
+  position: relative;
+}
+
+.autocomplete-list {
+  z-index: 99999;
+  position: absolute;
+  width: 100%;
+}
+.autocomplete-list li:hover {
+  background-color: #435ebe34;
+  cursor: pointer;
+}
+</style>
