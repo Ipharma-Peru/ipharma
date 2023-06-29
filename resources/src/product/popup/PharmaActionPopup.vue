@@ -58,6 +58,8 @@
 
 <script>
 import axios from "axios";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export default {
   data() {
@@ -71,17 +73,21 @@ export default {
       this.$emit("close"); // Emitir evento para indicar que se ha cerrado el pop-up
     },
     addpharmaAction() {
-      // Realizar la solicitud POST con axios
-      console.log(this.namepharmaAction)
-       debugger
       axios
         .post("/api/addpharmaaction", { nombre: this.namepharmaAction })
         .then((response) => {
-          // Aquí puedes manejar la respuesta de la solicitud
-          // Puedes emitir un evento para enviar los datos del pharmaAction agregado a tu componente padre
-          this.$emit("pharmaActionAgregado", response.data);
-          this.namepharmaAction = ""; // Reiniciar el campo de nombre del pharmaAction después de agregarlo
-          this.$emit("close"); // Cerrar el pop-up después de agregar el pharmaAction
+          if (response.data.status) {
+            Toastify({
+              text: "¡Guardado!",
+              duration: 3000,
+              close: true,
+              gravity: "bottom", // `top` or `bottom`
+              position: "left", // `left`, `center` or `right`
+              style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+              },
+            }).showToast();
+          }
         })
         .catch((error) => {
           console.error("Error al agregar el pharmaAction", error);

@@ -1949,6 +1949,11 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
+toastify-js@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.npmjs.org/toastify-js/-/toastify-js-1.12.0.tgz"
+  integrity sha512-HeMHCO9yLPvP9k0apGSdPUWrUbLnxUKNFzgUoZp1PHCLploIX/4DSQ7V8H25ef+h4iO9n0he7ImfcndnN6nDrQ==
+
 tslib@^2.3.0:
   version "2.5.3"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.5.3.tgz"
@@ -2030,7 +2035,14 @@ vue-router@^4.0.13:
   dependencies:
     "@vue/devtools-api" "^6.0.0"
 
-vue@^3.2.0, vue@^3.2.25, vue@^3.2.36, "vue@>= 2.5.0", vue@3.2.36:
+vue-toastify@^2.0.0-alpha.1:
+  version "2.0.0-alpha.1"
+  resolved "https://registry.npmjs.org/vue-toastify/-/vue-toastify-2.0.0-alpha.1.tgz"
+  integrity sha512-vBza3n6GSg7OscGeZcpXRcQ+l0wfcOnHucrUWL2Exls9VhkNpPuEaUAPn2gaa33EveXgNPGbI0CAM870PuNp5Q==
+  dependencies:
+    vue "^3.0.11"
+
+vue@^3.0.11, vue@^3.2.0, vue@^3.2.25, vue@^3.2.36, "vue@>= 2.5.0", vue@3.2.36:
   version "3.2.36"
   resolved "https://registry.npmjs.org/vue/-/vue-3.2.36.tgz"
   integrity sha512-5yTXmrE6gW8IQgttzHW5bfBiFA6mx35ZXHjGLDmKYzW6MMmYvCwuKybANRepwkMYeXw2v1buGg3/lPICY5YlZw==
