@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ActiveSubstanceController;
 use App\Http\Controllers\Api\PharmaActionController;
 use App\Http\Controllers\Api\LaboratoryController;
 use App\Http\Controllers\Api\ProviderController;
+use App\Http\Controllers\Api\PurchaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,4 +56,9 @@ Route::controller(ActiveSubstanceController::class)->group(function() {
 
 Route::controller(ProviderController::class)->group(function() {
     Route::post('/addprovider', 'store');
+    Route::post('/proveedor/buscar', 'searchProvider');
+});
+
+Route::controller(PurchaseController::class)->group(function() {
+    Route::post('/compras/registrar', 'store');
 });
