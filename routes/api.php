@@ -1,13 +1,14 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PresentationController;
 use App\Http\Controllers\Api\VentaController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ActiveSubstanceController;
 use App\Http\Controllers\Api\PharmaActionController;
 use App\Http\Controllers\Api\LaboratoryController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ProviderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,4 +51,8 @@ Route::controller(PharmaActionController::class)->group(function() {
 
 Route::controller(ActiveSubstanceController::class)->group(function() {
     Route::post('/addsubstanceactive', 'store');
+});
+
+Route::controller(ProviderController::class)->group(function() {
+    Route::post('/addprovider', 'store');
 });
