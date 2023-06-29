@@ -13,22 +13,35 @@
           <form @submit.prevent="addData">
             <div class="row">
               <div class="col-md-12">
+                <label for="proveedor" class="form-label">Proveedor</label>
                 <div class="form-group">
-                  <label for="proveedor" class="form-label">Proveedor</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="proveedor"
-                    v-model="formData.proveedores"
-                    placeholder="Proveedor"
-                  />
+                  <div class="input-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="proveedor"
+                      v-model="formData.proveedores"
+                      placeholder="Proveedor"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#proveedorPopup"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
+            <ProveedorPopup
+               
+              />
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="factura" class="form-label">Factura</label>
+                  <label for="factura" class="form-label">Numero de Factura</label>
                   <input
                     type="text"
                     class="form-control"
@@ -59,9 +72,9 @@
                   <thead>
                     <tr>
                       <th class="col-1">Acciones</th>
-                      <th class="col-3">Artículo</th>
+                      <th class="col-3">Productos</th>
                       <th class="col-1">Lote</th>
-                      <th class="col-1">Fecha</th>
+                      <th class="col-1">F. Vencimiento</th>
                       <th class="col-1">Cantidad</th>
                       <th class="col-1">Precio</th>
                       <th class="col-1">Total</th>
@@ -163,9 +176,15 @@
   </div>
 </template>
 <script>
+import ProveedorPopup from "./popup/ProveedorPopup.vue"
+
+
 import axios from "axios";
 
 export default {
+  components: {
+    ProveedorPopup
+  },
   data() {
     return {
       selectedItem: "",
@@ -189,6 +208,7 @@ export default {
         fechaFactura: "",
         factura: "",
       },
+      
     };
   },
   computed: {
