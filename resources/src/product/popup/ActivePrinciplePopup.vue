@@ -58,6 +58,8 @@
 
 <script>
 import axios from "axios";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export default {
   data() {
@@ -71,17 +73,21 @@ export default {
       this.$emit("close"); // Emitir evento para indicar que se ha cerrado el pop-up
     },
     addactivePrinciple() {
-      // Realizar la solicitud POST con axios
-      console.log(this.nameactivePrinciple)
-       debugger
       axios
         .post("/api/addsubstanceactive", { nombre: this.nameactivePrinciple })
         .then((response) => {
-          // Aquí puedes manejar la respuesta de la solicitud
-          // Puedes emitir un evento para enviar los datos del activePrinciple agregado a tu componente padre
-          this.$emit("activePrincipleAgregado", response.data);
-          this.nameactivePrinciple = ""; // Reiniciar el campo de nombre del activePrinciple después de agregarlo
-          this.$emit("close"); // Cerrar el pop-up después de agregar el activePrinciple
+          if (response.data.status) {
+            Toastify({
+              text: "¡Guardado!",
+              duration: 3000,
+              close: true,
+              gravity: "bottom", // `top` or `bottom`
+              position: "left", // `left`, `center` or `right`
+              style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+              },
+            }).showToast();
+          }
         })
         .catch((error) => {
           console.error("Error al agregar el activePrinciple", error);

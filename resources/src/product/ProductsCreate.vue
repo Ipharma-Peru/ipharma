@@ -8,7 +8,7 @@
           <router-link to="/inventario/products">Back to List</router-link>
         </div>
         <div class="card-body">
-          <form @submit.prevent="enviarFormulario(event)" ref="formCreate">
+          <form @submit.prevent="addForm()" ref="formCreate">
             <div class="row">
               <div class="col-8">
                 <div class="form-group">
@@ -176,10 +176,7 @@
                   </div>
                 </fieldset>
               </div>
-              <PresentationPopup
-                @laboratorioAgregado="agregarLaboratorio"
-                @close="cerrarPopup"
-              />
+              <PresentationPopup @close="cerrarPopup" />
               <div class="col-6">
                 <label for="laboratorio" class="form-label">Laboratorio</label>
                 <fieldset>
@@ -210,10 +207,7 @@
                 </fieldset>
               </div>
               <!-- Agrega el componente LaboratorioPopup en el mismo archivo -->
-              <LaboratoryPopup
-                @laboratorioAgregado="agregarLaboratorio"
-                @close="cerrarPopup"
-              />
+              <LaboratoryPopup @close="cerrarPopup" />
             </div>
 
             <div class="row mt-3">
@@ -246,10 +240,7 @@
                   </div>
                 </fieldset>
               </div>
-              <ActivePrinciplePopup
-                @laboratorioAgregado="agregarLaboratorio"
-                @close="cerrarPopup"
-              />
+              <ActivePrinciplePopup @close="cerrarPopup" />
               <div class="col-6">
                 <label for="accionFarmacologica" class="form-label"
                   >Acción Farmacológica</label
@@ -267,23 +258,28 @@
                       ></multiselect>
                     </div>
                     <div class="col-1 m-0 text-end">
-                      <button type="button"
-                      class="btn btn-primary"
-                      data-bs-toggle="modal"
-                      data-bs-target="#pharmaAction">+</button>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#pharmaAction"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 </fieldset>
               </div>
-              <PharmaActionPopup
-                @laboratorioAgregado="agregarLaboratorio"
-                @close="cerrarPopup"
-              />
+              <PharmaActionPopup @close="cerrarPopup" />
             </div>
             <div class="row mt-3">
               <div class="col-6">
                 <div class="buttons">
-                  <button type="submit" class="btn btn-outline-primary block">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    :disabled="isButtonDisabled"
+                  >
                     <i class="bi bi-pencil"></i> Guardar
                   </button>
                 </div>
@@ -302,6 +298,8 @@ import PharmaActionPopup from "./popup/PharmaActionPopup.vue";
 import ActivePrinciplePopup from "./popup/ActivePrinciplePopup.vue";
 import axios from "axios";
 import Multiselect from "vue-multiselect";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export default {
   components: {
@@ -309,7 +307,41 @@ export default {
     PresentationPopup,
     Multiselect,
     PharmaActionPopup,
-    ActivePrinciplePopup
+    ActivePrinciplePopup,
+  },
+  computed: {
+    isButtonDisabled() {
+      // Deshabilitar el botón si no se han llenado todos los campos excepto el checkbox de fraccionable
+      const {
+        description,
+        selectedClass,
+        selectedSubclase,
+        unidadesByCaja,
+        unidadesByBlister,
+        pvpx,
+        pvpBlister,
+        pvpFraccion,
+        selectedPresentacion,
+        selectedLaboratorio,
+        selectedPrincipios,
+        selectedactionPharma,
+      } = this.formData;
+
+      return (
+        !description ||
+        !selectedClass ||
+        !selectedSubclase ||
+        unidadesByCaja < 0 ||
+        unidadesByBlister < 0 ||
+        pvpx < 0 ||
+        pvpBlister < 0 ||
+        pvpFraccion < 0 ||
+        !selectedPresentacion ||
+        !selectedLaboratorio ||
+        !selectedPrincipios ||
+        !selectedactionPharma
+      );
+    },
   },
   data() {
     return {
@@ -325,11 +357,11 @@ export default {
         selectedClass: "",
         selectedSubclase: "",
         fraccionable: false,
-        unidadesByCaja: "",
-        unidadesByBlister: "",
-        pvpx: "",
-        pvpFraccion: "",
-        pvpBlister: "",
+        unidadesByCaja: 0,
+        unidadesByBlister: 0,
+        pvpx: 0,
+        pvpFraccion: 0,
+        pvpBlister: 0,
         selectedPresentacion: "",
         selectedLaboratorio: "",
         selectedPrincipios: "",
@@ -357,11 +389,8 @@ export default {
       this.mostrarPopup = true;
     },
     cerrarPopup() {
-      alert("h");
       this.mostrarPopup = false;
-    },
-    agregarLaboratorio(laboratorio) {
-      // Lógica para agregar el laboratorio
+      this.fetchData();
     },
     fetchData() {
       axios
@@ -378,27 +407,39 @@ export default {
           console.error("Error al obtener los datos:", error);
         });
     },
-    enviarFormulario(event) {
-      const formData = {
-        description: this.$refs.formCreate.descripcion.value,
-        selectedClass: this.$refs.formCreate.clase.value,
-        selectedSubclase: this.$refs.formCreate.subclase.value,
-        fraccionable: this.$refs.formCreate.fraccionable.checked,
-        unidadesByCaja: this.$refs.formCreate.unidadCaja.value,
-        unidadesByBlister: this.$refs.formCreate.unidadBlister.value,
-        pvpx: this.$refs.formCreate.pvpX.value,
-        pvpBlister: this.$refs.formCreate.pvpBlister.value,
-        pvpFraccion: this.$refs.formCreate.pvpFraccion.value,
-        selectedPresentacion: this.$refs.formCreate.presentacion.value,
-        selectedLaboratorio: this.$refs.formCreate.laboratorio.value,
-        selectedPrincipios: this.formData.selectedPrincipios,
-        selectedactionPharma: this.formData.selectedactionPharma,
-      };
-      console.log(formData);
+    addForm() {
       axios
-        .post("/api/registerproduct", formData)
+        .post("/api/registerproduct", this.formData)
         .then((response) => {
           // Lógica para manejar la respuesta de la solicitud
+          if (response.data.status) {
+            Toastify({
+              text: "¡Guardado!",
+              duration: 3000,
+              close: true,
+              gravity: "bottom", // `top` or `bottom`
+              position: "left", // `left`, `center` or `right`
+              style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+              },
+            }).showToast();
+            // Reiniciar los valores del formulario
+            this.formData = {
+              description: "",
+              selectedClass: "",
+              selectedSubclase: "",
+              fraccionable: false,
+              unidadesByCaja: "",
+              unidadesByBlister: "",
+              pvpx: "",
+              pvpFraccion: "",
+              pvpBlister: "",
+              selectedPresentacion: "",
+              selectedLaboratorio: "",
+              selectedPrincipios: "",
+              selectedactionPharma: "",
+            };
+          }
         })
         .catch((error) => {
           // Lógica para manejar el error de la solicitud
