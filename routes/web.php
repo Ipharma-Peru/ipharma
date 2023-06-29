@@ -44,9 +44,17 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
         Route::get('/products', function () {
             return view('admin.inventory.products');
         })->name('products');
-        Route::get('/{any}', function () {
+         Route::get('products/{any}', function () {
             return view('admin.inventory.products');
         })->where('any', '.*');
+        Route::get('/shopping', function () {
+            return view('admin.inventory.shopping');
+        })->name('shopping');
+        Route::get('shopping/{any}', function () {
+            return view('admin.inventory.shopping');
+        })->where('any', '.*');
+       
+       
     });
     // Route::get('/{any}', function () {
     //     return view('blogs');
