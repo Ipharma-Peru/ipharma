@@ -13,13 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('natural_people', function (Blueprint $table) {
+        Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->string('numero_documento', 15);
-            $table->string('nombres', 50);
-            $table->string('apellido_paterno', 40);
-            $table->string('apellido_materno', 40);
-            $table->date('fecha_nacimiento')->nullable();
             $table->foreignId('person_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });
@@ -32,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('natural_people');
+        Schema::dropIfExists('clients');
     }
 };
