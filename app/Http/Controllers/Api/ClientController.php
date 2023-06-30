@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use App\Models\Client;
 use App\Http\Controllers\Api\NaturalPersonController;
+use App\Models\Client;
+use App\Models\NaturalPerson;
 
 class ClientController extends Controller
 {
@@ -38,6 +39,36 @@ class ClientController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            $errorMessage = $e->getMessage();
+            $errorCode = $e->getCode();
+
+            return [
+                'status' => false,
+                'message' => $errorMessage,
+                'code' => $errorCode
+            ];
+        }
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $search = $request->document;
+            return NaturalPerson::join('people', 'people.id','natural_people.person_id')
+            ->join('clients','clients.person_id','people.id')
+            ->select(
+                'clients.id',
+                'natural_people.numero_documento',
+                DB::raw("CONCAT(
+                        natural_people.nombres, ' ',
+                        natural_people.apellido_paterno, ' ',
+                        natural_people.apellido_materno) AS nombre")
+                )
+            ->where('natural_people.numero_documento','like', '%'. $search .'%')
+            ->get();
+
+        } catch (\Exception $e) {
+
             $errorMessage = $e->getMessage();
             $errorCode = $e->getCode();
 

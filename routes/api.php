@@ -67,4 +67,5 @@ Route::controller(PurchaseController::class)->group(function() {
 
 Route::controller(ClientController::class)->group(function() {
     Route::post('/clientes/registrar', 'store');
+    Route::post('/clientes/buscar', 'search');
 });
