@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->date('fecha_compra');
-            $table->string('serie_documento', 5);
             $table->string('numero_documento', 15);
             $table->foreignId('provider_id')->constrained()->restrictOnDelete();
             $table->timestamps();
