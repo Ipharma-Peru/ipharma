@@ -41,12 +41,16 @@
               <div class="col-6">
                 <div class="input-group">
                   <input
+                    maxlength="8"
                     type="text"
                     class="form-control me-2"
                     id="dni"
                     placeholder="DNI"
                     aria-label="Recipient's username"
                     aria-describedby="button-addon2"
+                    v-model="cliente.dni"
+                    @keydown.enter="fetchClienteData"
+                    @input="handleDNIInput"
                   />
                   <button
                     type="button"
@@ -66,6 +70,7 @@
                       type="text"
                       class="form-control"
                       id="direccion"
+                      v-model="cliente.direccion"
                       disabled
                     />
                   </div>
@@ -78,6 +83,7 @@
                       type="text"
                       class="form-control"
                       id="razonSocial"
+                      v-model="cliente.razonSocial"
                       disabled
                     />
                   </div>
@@ -321,6 +327,8 @@
 <script>
 import ClientePopup from "./popup/ClientePopup.vue";
 import axios from "axios";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 export default {
   components: {
     ClientePopup,
@@ -339,6 +347,9 @@ export default {
           { id: 0, name: "Con DNI" },
           { id: 1, name: "Sin documento" },
         ],
+        dni: "",
+        razonSocial: "",
+        direccion: "",
       },
     };
   },
@@ -431,6 +442,67 @@ export default {
     removeProduct(index) {
       this.selectedProducts.splice(index, 1);
       // this.calculateInvoiceTotals(); // Actualiza los totales después de eliminar el ítem
+    },
+    // ------Clientes--------
+    fetchClienteData() {
+      if (this.cliente.dni.length === 8) {
+        axios
+          .post("/api/clientes/buscar", {
+            document: this.cliente.dni,
+          })
+          .then((response) => {
+            if (response.data.length > 0) {
+              Toastify({
+                text: "¡Cargando!",
+                duration: 3000,
+                close: true,
+                gravity: "bottom", // `top` or `bottom`
+                position: "left", // `left`, `center` or `right`
+                style: {
+                  background: "linear-gradient(to right, #00b09b, #96c93d)",
+                },
+              }).showToast();
+              console.log(response);
+              const cliente = response.data[0];
+              this.cliente.razonSocial = cliente.nombre;
+              this.cliente.direccion = "Av Arica 123 Breña";
+            } else {
+              Toastify({
+                text: "¡No existe, agregalo!",
+                duration: 3000,
+                close: true,
+                gravity: "bottom", // `top` or `bottom`
+                position: "left", // `left`, `center` or `right`
+                style: {
+                  background: "linear-gradient(to right, #ff5733, #ff8f33)",
+                  color: "#fff", // Cambiar el color del texto a blanco
+                },
+              }).showToast();
+            }
+          })
+          .catch((error) => {
+            console.error("Error al obtener los datos del cliente:", error);
+          });
+      } else {
+        this.cliente.razonSocial = "";
+        this.cliente.direccion = "";
+      }
+    },
+    handleDNIInput(event) {
+      const input = event.target;
+      const dni = input.value;
+
+      if (dni.length > 8) {
+        input.value = dni.slice(0, 8);
+      }
+
+      if (dni.length !== 8) {
+        this.clearRazonSocialAndDireccion();
+      }
+    },
+    clearRazonSocialAndDireccion() {
+      this.cliente.razonSocial = "";
+      this.cliente.direccion = "";
     },
   },
 };
