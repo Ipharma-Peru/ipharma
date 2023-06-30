@@ -21,31 +21,65 @@
             <h4 class="card-title">Cliente</h4>
           </div>
           <div class="card-body">
-            <div class="col-md-12">
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control me-2"
-                  id="basicInput"
-                  placeholder="DNI | RUC"
-                  aria-label="Recipient's username"
-                  aria-describedby="button-addon2"
-                />
-
-                <a href="#" class="btn icon btn-primary"
-                  ><i class="bi bi-pencil"></i
-                ></a>
+            <div class="row">
+              <div class="col-6">
+                <fieldset class="form-group">
+                  <select
+                    v-model="cliente.selectedDocument"
+                    class="form-select"
+                  >
+                    <option
+                      v-for="option in cliente.document"
+                      :key="option.id"
+                      :value="option.id"
+                    >
+                      {{ option.name }}
+                    </option>
+                  </select>
+                </fieldset>
               </div>
-              <div class="form-group has-icon-left mt-2">
-                <div class="position-relative">
+              <div class="col-6">
+                <div class="input-group">
                   <input
                     type="text"
-                    class="form-control"
-                    id="first-name-horizontal-icon"
-                    disabled
+                    class="form-control me-2"
+                    id="dni"
+                    placeholder="DNI"
+                    aria-label="Recipient's username"
+                    aria-describedby="button-addon2"
                   />
-                  <div class="form-control-icon">
-                    <i class="bi bi-pin-map-fill"></i>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#clientePopup"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <ClientePopup />
+              <div class="col-md-6">
+                <div class="form-group has-icon-left mt-2">
+                  <div class="position-relative">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="direccion"
+                      disabled
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group has-icon-left mt-2">
+                  <div class="position-relative">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="razonSocial"
+                      disabled
+                    />
                   </div>
                 </div>
               </div>
@@ -58,6 +92,7 @@
               <table class="table table-striped table-hover mb-0">
                 <thead>
                   <tr>
+                    <th class="col-1">Action</th>
                     <th class="col-1">Ítem</th>
                     <th class="col-3">Artículo</th>
                     <th class="col-1">Lote</th>
@@ -66,11 +101,18 @@
                     <th class="col-1">Cantidad</th>
                     <th class="col-1">P. X</th>
                     <th class="col-1">Total</th>
-                    <th class="col-1">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(product, index) in selectedProducts" :key="index">
+                    <td>
+                      <button
+                        class="btn icon btn-primary btn-sm"
+                        @click="removeProduct(index)"
+                      >
+                        <i class="bi bi-trash-fill"></i>
+                      </button>
+                    </td>
                     <td>{{ index + 1 }}</td>
                     <td>{{ product.descripcion }}</td>
                     <td>{{ product.numero_lote }}</td>
@@ -106,11 +148,6 @@
                       }}
                     </td>
                     <td>{{ calculateTotalPrice(product) }}</td>
-                    <td>
-                      <button class="btn icon btn-primary btn-sm" @click="removeProduct(index)">
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -120,27 +157,15 @@
             >
               <div class="sub-total d-flex">
                 <label for="">Sub total</label>
-                <h5 class="ps-5">S/ 0.00</h5>
+                <h5 class="ps-5">S/ {{ subTotal }}</h5>
               </div>
               <div class="igv d-flex">
-                <label for="">I.G.V </label>
-                <h5 class="ps-5">S/ 0.00</h5>
-              </div>
-              <div class="otro d-flex">
-                <label for="">Otro tributo</label>
-                <h5 class="ps-5">S/ 0.00</h5>
-              </div>
-              <div class="sub-total d-flex">
-                <h5 for="">Total</h5>
-                <h5 class="ps-5">S/ 0.00</h5>
-              </div>
-              <div class="otro d-flex">
-                <label for="">Redondeo</label>
-                <h5 class="ps-5">S/ 0.00</h5>
+                <label for="">I.G.V</label>
+                <h5 class="ps-5">S/ {{ igv }}</h5>
               </div>
               <div class="sub-total d-flex">
                 <h5 for="">Total a cobrar</h5>
-                <h5 class="ps-5">S/ 0.00</h5>
+                <h5 class="ps-5">S/ {{ total }}</h5>
               </div>
             </div>
           </div>
@@ -294,8 +319,12 @@
 </template>
 
 <script>
+import ClientePopup from "./popup/ClientePopup.vue";
 import axios from "axios";
 export default {
+  components: {
+    ClientePopup,
+  },
   data() {
     return {
       products: [],
@@ -304,9 +333,37 @@ export default {
       marca: [],
       generico: [],
       selectedProducts: [],
+      cliente: {
+        selectedDocument: "",
+        document: [
+          { id: 0, name: "Con DNI" },
+          { id: 1, name: "Sin documento" },
+        ],
+      },
     };
   },
   mounted() {},
+  computed: {
+    // --------Sumatoria de Productos----------
+    subTotal() {
+      let total = 0;
+      for (let product of this.selectedProducts) {
+        total += parseFloat(product.total_price) || 0;
+      }
+      return total.toFixed(2);
+    },
+    igv() {
+      const subTotal = parseFloat(this.subTotal) || 0;
+      const igvPercentage = 0.18; // Porcentaje de IGV (18%)
+      const igvAmount = subTotal * igvPercentage;
+      return igvAmount.toFixed(2);
+    },
+    total() {
+      const subTotal = parseFloat(this.subTotal) || 0;
+      const igv = parseFloat(this.igv) || 0;
+      return (subTotal - igv).toFixed(2);
+    },
+  },
   methods: {
     fetchProducts() {
       axios
