@@ -152,4 +152,12 @@ class ProductController extends Controller
         $code = str_pad($code, 8, '0', STR_PAD_LEFT);
         return $code;
     }
+
+    public function getProductsForSale(Request $request)
+    {
+        return Product::select('id','codigo','descripcion')
+            ->where('descripcion','like', '%'. $request->search .'%')
+            ->orderBy('descripcion','ASC')
+            ->get();
+    }
 }
