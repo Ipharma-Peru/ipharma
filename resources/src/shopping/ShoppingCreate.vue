@@ -190,8 +190,9 @@
 </template>
 <script>
 import ProveedorPopup from "./popup/ProveedorPopup.vue";
-
 import axios from "axios";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export default {
   components: {
@@ -212,7 +213,7 @@ export default {
           precio: "",
           showSuggestions: "",
           optionSelected: "",
-          codigoArticulo: "",
+          id: "",
         },
       ],
       formData: {
@@ -264,22 +265,31 @@ export default {
       // Recopilar los datos de la tabla y formData
       const datos = {
         items: this.items.map((item) => ({
-          articulo: item.articulo,
           lote: item.lote,
-          fecha: item.fecha,
+          fechaVencimiento: item.fecha,
           cantidad: item.cantidad,
-          precio: item.precio,
-          codigoArticulo: item.codigoArticulo, // Agregar el código del artículo
+          precioUnitario: item.precio,
+          idProducto: item.id, // Agregar el código del artículo
         })),
-        proveedor: this.formData,
+        idProveedor: this.formData.proveedorId,
+        numeroDocumento: this.formData.factura,
+        fechaCompra:this.formData.fechaFactura
       };
-      console.log(datos);
-      debugger;
       axios
-        .post("URL_DEL_ENDPOINT", datos)
+        .post("/api/compras/registrar", datos)
         .then((response) => {
-          // La solicitud se completó con éxito, puedes manejar la respuesta aquí
-          console.log(response.data);
+          if (response.data.status) {
+            Toastify({
+              text: "¡Guardado!",
+              duration: 3000,
+              close: true,
+              gravity: "bottom", // `top` or `bottom`
+              position: "left", // `left`, `center` or `right`
+              style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+              },
+            }).showToast();
+          }
         })
         .catch((error) => {
           // Ocurrió un error al realizar la solicitud POST, puedes manejar el error aquí
@@ -297,18 +307,18 @@ export default {
       item.articulo = option.nombre;
       item.showSuggestions = false;
       item.optionSelected = true;
-      item.codigoArticulo = option.id;
+      item.id = option.id;
     },
     fetchOptions(item) {
       axios
-        .post("/api/products", {
+        .post("/api/compras/buscarproductos", {
           search: item.articulo.toLowerCase(),
         })
         .then((response) => {
           item.options = response.data.map((product) => ({
             nombre: product.descripcion,
-            id: product.codigo,
-            // uniqueId: `${item.articulo}-${index}`,
+            codigo: product.codigo,
+            id: product.id,
           }));
         })
         .catch((error) => {
@@ -341,7 +351,6 @@ export default {
       axios
         .post("/api/proveedor/buscar", { search: inputValue })
         .then((response) => {
-          console.log(response);
           this.suggestions = response.data;
           this.showSuggestionList = true;
         })
