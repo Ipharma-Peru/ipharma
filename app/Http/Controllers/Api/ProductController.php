@@ -105,6 +105,9 @@ class ProductController extends Controller
             $product->presentation_id = $request->selectedPresentacion;
             $product->laboratory_id = $request->selectedLaboratorio;
             $product->product_subclass_id = $request->selectedSubclase;
+            $product->unit_id = 1; // TODO
+            $product->affectation_type_id = $request->tipoAfectacion;
+            $product->price_type_id = 1; // TODO
             $product->save();
 
             $productId = $product->id;
