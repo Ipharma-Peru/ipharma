@@ -23,6 +23,9 @@ return new class extends Migration
             $table->foreignId('presentation_id')->constrained()->restrictOnDelete();
             $table->foreignId('laboratory_id')->constrained()->restrictOnDelete();
             $table->foreignId('product_subclass_id')->constrained()->restrictOnDelete();
+            $table->foreignId('unit_id')->constrained()->restrictOnDelete();
+            $table->foreignId('affectation_type_id')->constrained()->restrictOnDelete();
+            $table->foreignId('price_type_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });
     }
