@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PharmaActionController;
 use App\Http\Controllers\Api\LaboratoryController;
 use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\PurchaseController;
+use App\Http\Controllers\Api\ClientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,4 +63,8 @@ Route::controller(ProviderController::class)->group(function() {
 
 Route::controller(PurchaseController::class)->group(function() {
     Route::post('/compras/registrar', 'store');
+});
+
+Route::controller(ClientController::class)->group(function() {
+    Route::post('/clientes/registrar', 'store');
 });
