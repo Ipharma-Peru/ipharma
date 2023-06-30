@@ -12,17 +12,31 @@
         <div class="card-body">
           <form @submit.prevent="addData">
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-7">
                 <label for="proveedor" class="form-label">Proveedor</label>
                 <div class="form-group">
                   <div class="input-group">
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="proveedor"
-                      v-model="formData.proveedores"
-                      placeholder="Proveedor"
-                    />
+                    <div class="full-row">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="proveedor"
+                        v-model="formData.proveedores"
+                        placeholder="Proveedor"
+                        @input="fetchSuggestions"
+                        @focus="toggleSuggestions(true)"
+                        @blur="toggleSuggestions(false)"
+                      />
+                      <ul v-if="showSuggestionList" class="suggestion-list">
+                        <li
+                          v-for="suggestion in suggestions"
+                          :key="suggestion"
+                          @mousedown="selectSuggestion(suggestion)"
+                        >
+                          {{ suggestion.razon_social }}
+                        </li>
+                      </ul>
+                    </div>
                     <button
                       type="button"
                       class="btn btn-primary"
@@ -34,14 +48,11 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <ProveedorPopup
-               
-              />
-            <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-3">
                 <div class="form-group">
-                  <label for="factura" class="form-label">Numero de Factura</label>
+                  <label for="factura" class="form-label"
+                    >Numero de Factura</label
+                  >
                   <input
                     type="text"
                     class="form-control"
@@ -51,7 +62,7 @@
                   />
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-2">
                 <div class="form-group">
                   <label for="fechaFactura" class="form-label"
                     >Fecha de Factura</label
@@ -66,6 +77,8 @@
                 </div>
               </div>
             </div>
+            <ProveedorPopup />
+            <div class="row"></div>
             <div class="row">
               <div class="container">
                 <table class="table">
@@ -107,7 +120,7 @@
                               v-for="option in item.options"
                               :key="option.id"
                               class="list-group-item"
-                              @click="selectItem(option, item)"
+                              @mousedown="selectItem(option, item)"
                             >
                               {{ option.nombre }}
                             </li>
@@ -176,14 +189,14 @@
   </div>
 </template>
 <script>
-import ProveedorPopup from "./popup/ProveedorPopup.vue"
-
-
+import ProveedorPopup from "./popup/ProveedorPopup.vue";
 import axios from "axios";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export default {
   components: {
-    ProveedorPopup
+    ProveedorPopup,
   },
   data() {
     return {
@@ -200,15 +213,17 @@ export default {
           precio: "",
           showSuggestions: "",
           optionSelected: "",
-          codigoArticulo: "",
+          id: "",
         },
       ],
       formData: {
         proveedores: "",
+        proveedorId: null,
         fechaFactura: "",
         factura: "",
       },
-      
+      suggestions: [],
+      showSuggestionList: false,
     };
   },
   computed: {
@@ -250,22 +265,31 @@ export default {
       // Recopilar los datos de la tabla y formData
       const datos = {
         items: this.items.map((item) => ({
-          articulo: item.articulo,
           lote: item.lote,
-          fecha: item.fecha,
+          fechaVencimiento: item.fecha,
           cantidad: item.cantidad,
-          precio: item.precio,
-          codigoArticulo: item.codigoArticulo, // Agregar el código del artículo
+          precioUnitario: item.precio,
+          idProducto: item.id, // Agregar el código del artículo
         })),
-        proveedor: this.formData,
+        idProveedor: this.formData.proveedorId,
+        numeroDocumento: this.formData.factura,
+        fechaCompra:this.formData.fechaFactura
       };
-      console.log(datos);
-      debugger;
       axios
-        .post("URL_DEL_ENDPOINT", datos)
+        .post("/api/compras/registrar", datos)
         .then((response) => {
-          // La solicitud se completó con éxito, puedes manejar la respuesta aquí
-          console.log(response.data);
+          if (response.data.status) {
+            Toastify({
+              text: "¡Guardado!",
+              duration: 3000,
+              close: true,
+              gravity: "bottom", // `top` or `bottom`
+              position: "left", // `left`, `center` or `right`
+              style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+              },
+            }).showToast();
+          }
         })
         .catch((error) => {
           // Ocurrió un error al realizar la solicitud POST, puedes manejar el error aquí
@@ -277,29 +301,24 @@ export default {
       this.fetchOptions(item);
     },
     handleBlur(item) {
-      setTimeout(() => {
-        if (!item.optionSelected) {
-          item.showSuggestions = false;
-        }
-        item.optionSelected = false;
-      }, 200);
+      item.showSuggestions = false;
     },
     selectItem(option, item) {
       item.articulo = option.nombre;
       item.showSuggestions = false;
       item.optionSelected = true;
-      item.codigoArticulo = option.id;
+      item.id = option.id;
     },
     fetchOptions(item) {
       axios
-        .post("/api/products", {
+        .post("/api/compras/buscarproductos", {
           search: item.articulo.toLowerCase(),
         })
         .then((response) => {
           item.options = response.data.map((product) => ({
             nombre: product.descripcion,
-            id: product.codigo,
-            // uniqueId: `${item.articulo}-${index}`,
+            codigo: product.codigo,
+            id: product.id,
           }));
         })
         .catch((error) => {
@@ -325,6 +344,28 @@ export default {
     calcularTotal(item) {
       return item.cantidad * item.precio;
     },
+    // -----Provedor Sugestion------
+    fetchSuggestions() {
+      const inputValue = this.formData.proveedores;
+
+      axios
+        .post("/api/proveedor/buscar", { search: inputValue })
+        .then((response) => {
+          this.suggestions = response.data;
+          this.showSuggestionList = true;
+        })
+        .catch((error) => {
+          console.error("Error al obtener las sugerencias:", error);
+        });
+    },
+    toggleSuggestions(show) {
+      this.showSuggestionList = show && this.suggestions.length > 0;
+    },
+    selectSuggestion(suggestion) {
+      this.formData.proveedores = suggestion.razon_social;
+      this.formData.proveedorId = suggestion.id;
+      this.showSuggestionList = false;
+    },
   },
 };
 function removeAccents(text) {
@@ -344,5 +385,24 @@ function removeAccents(text) {
 .autocomplete-list li:hover {
   background-color: #435ebe34;
   cursor: pointer;
+}
+</style>
+<style>
+.suggestion-list {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.suggestion-list li {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.full-row {
+  width: 95%;
 }
 </style>

@@ -9,9 +9,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="proveedorLabel">
-            Nuevo proveedor
-          </h1>
+          <h1 class="modal-title fs-5" id="proveedorLabel">Nuevo proveedor</h1>
           <button
             type="button"
             class="btn-close"
@@ -29,7 +27,7 @@
                 type="text"
                 class="form-control"
                 id="recipient-proveedor"
-                v-model="rsProveedor"
+                v-model="razon_social"
               />
             </div>
             <div class="mb-3">
@@ -40,7 +38,8 @@
                 type="number"
                 class="form-control"
                 id="recipient-proveedor"
-                v-model="rucProveedor"
+                v-model="ruc"
+                @input="validateRUC"
               />
             </div>
           </form>
@@ -54,7 +53,12 @@
           >
             Close
           </button>
-          <button type="button" class="btn btn-primary" @click="addproveedor">
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="addproveedor"
+            :disabled="isButtonDisabled"
+          >
             Guardar
           </button>
         </div>
@@ -65,38 +69,60 @@
 
 <script>
 import axios from "axios";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export default {
   data() {
     return {
-      rsProveedor: "",
-      rucProveedor: "",
+      razon_social: "",
+      ruc: "",
     };
+  },
+  computed: {
+    isButtonDisabled() {
+      return (
+        this.razon_social.length === 0 || this.ruc.toString().length !== 11
+      );
+    },
   },
   methods: {
     cerrarPopup() {
-      this.rsProveedor = ""; // Reiniciar el campo de nombre del proveedor al cerrar el pop-up
+      this.razon_social = "";
+      this.ruc = "";
       this.$emit("close"); // Emitir evento para indicar que se ha cerrado el pop-up
     },
     addproveedor() {
-      // Realizar la solicitud POST con axios
-      console.log(this.rucProveedor,this.rsProveedor);
-      debugger;
       axios
         .post("/api/addprovider", {
-          razon_social: this.rsProveedor,
-          ruc: this.rucProveedor,
+          razon_social: this.razon_social,
+          ruc: this.ruc,
         })
         .then((response) => {
-          // Aquí puedes manejar la respuesta de la solicitud
-          // Puedes emitir un evento para enviar los datos del proveedor agregado a tu componente padre
-          this.$emit("proveedorAgregado", response.data);
-          this.rsProveedor = ""; // Reiniciar el campo de nombre del proveedor después de agregarlo
-          this.$emit("close"); // Cerrar el pop-up después de agregar el proveedor
+          console.log(response.data.status);
+          if (response.data.status) {
+            Toastify({
+              text: "¡Guardado!",
+              duration: 3000,
+              close: true,
+              gravity: "bottom", // `top` or `bottom`
+              position: "left", // `left`, `center` or `right`
+              style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+              },
+            }).showToast();
+            this.razon_social = "";
+            this.ruc = "";
+          }
         })
         .catch((error) => {
           console.error("Error al agregar el proveedor", error);
         });
+    },
+    validateRUC() {
+      if (this.ruc.toString().length > 11) {
+        this.ruc = this.ruc.toString().slice(0, 11);
+      }
     },
   },
 };
