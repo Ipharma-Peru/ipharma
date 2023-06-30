@@ -36,6 +36,7 @@ Route::controller(ProductController::class)->group(function() {
     Route::get('/productInit', 'getInitialData');
     Route::post('/subclassbyid', 'getSubclassesByIdClass');
     Route::post('/registerproduct', 'store');
+    Route::post('/compras/buscarproductos', 'getProductsForSale');
 });
 
 Route::controller(PresentationController::class)->group(function() {
