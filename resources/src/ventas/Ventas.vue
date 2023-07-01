@@ -199,7 +199,7 @@
             <div class="d-flex justify-content-between align-self-center">
               <h5 class="">Artículo</h5>
               <h5>
-                <span class="badge bg-secondary">{{ selecLabArticle }} </span>
+                <span class="badge bg-secondary">{{ selected.labArticle }} </span>
               </h5>
             </div>
             <div class="table-responsive search">
@@ -210,7 +210,7 @@
                       <th class="col-1">Código</th>
                       <th class="col-4">Artículo</th>
                       <th class="col-1">Laboratorio</th>
-                      <th class="col-1">P. Caja</th>
+                      <th class="col-1">P. X</th>
                       <th class="col-1">P. Blís.</th>
                       <th class="col-1">P. Frac.</th>
                       <th class="col-1">Stock</th>
@@ -244,7 +244,7 @@
             <div class="d-flex justify-content-between align-self-center mt-4">
               <h5 class="">Generico</h5>
               <h5>
-                <span class="badge bg-secondary">Lab: </span>
+                <span class="badge bg-secondary">{{  selected.labGeneric }} </span>
               </h5>
             </div>
             <div class="table-responsive search">
@@ -255,7 +255,7 @@
                       <th class="col-1">Código</th>
                       <th class="col-4">Artículo</th>
                       <th class="col-1">Laboratorio</th>
-                      <th class="col-1">P. Caja</th>
+                      <th class="col-1">P. X</th>
                       <th class="col-1">P. Blís.</th>
                       <th class="col-1">P. Frac.</th>
                       <th class="col-1">Stock</th>
@@ -264,7 +264,12 @@
                     </tr>
                   </thead>
                   <tbody class="table-group-divider">
-                    <tr v-for="item in generico" :key="item.id">
+                    <tr
+                      v-for="item in generico"
+                      :key="item.id"
+                      @click="setLaboratoryGeneric(item)"
+                      @dblclick="addSelectedProduct(item)"
+                    >
                       <td>{{ item.codigo }}</td>
                       <td>{{ item.product_description }}</td>
                       <td>{{ item.nombre_laboratorio }}</td>
@@ -282,7 +287,7 @@
             <div class="d-flex justify-content-between align-self-center mt-4">
               <h5 class="">Comercial</h5>
               <h5>
-                <span class="badge bg-secondary">Lab: </span>
+                <span class="badge bg-secondary">{{  selected.labMarca }} </span>
               </h5>
             </div>
             <div class="table-responsive search">
@@ -293,7 +298,7 @@
                       <th class="col-1">Código</th>
                       <th class="col-4">Artículo</th>
                       <th class="col-1">Laboratorio</th>
-                      <th class="col-1">P. Caja</th>
+                      <th class="col-1">P. X</th>
                       <th class="col-1">P. Blís.</th>
                       <th class="col-1">P. Frac.</th>
                       <th class="col-1">Stock</th>
@@ -302,7 +307,12 @@
                     </tr>
                   </thead>
                   <tbody class="table-group-divider">
-                    <tr v-for="item in marca" :key="item.id">
+                    <tr
+                      v-for="item in marca"
+                      :key="item.id"
+                      @click="setLaboratoryMarca(item)"
+                      @dblclick="addSelectedProduct(item)"
+                    >
                       <td>{{ item.codigo }}</td>
                       <td>{{ item.product_description }}</td>
                       <td>{{ item.nombre_laboratorio }}</td>
@@ -337,7 +347,11 @@ export default {
     return {
       products: [],
       searchTerm: "",
-      selecLabArticle: "",
+      selected: {
+        labArticle: "",
+        labMarca: "",
+        labGeneric:""
+      },
       marca: [],
       generico: [],
       selectedProducts: [],
@@ -387,7 +401,7 @@ export default {
         });
     },
     selectProduct(product) {
-      this.selecLabArticle = product.nombre_laboratorio;
+      this.selected.labArticle = product.nombre_laboratorio;
       axios
         .post("/api/productscode", {
           codigo: product.codigo,
@@ -401,7 +415,14 @@ export default {
           console.error("Error al obtener los datos:", error);
         });
     },
+    setLaboratoryGeneric({ nombre_laboratorio }) {
+      this.selected.labGeneric = nombre_laboratorio;
+    },
+    setLaboratoryMarca({ nombre_laboratorio }) {
+      this.selected.labMarca = nombre_laboratorio;
+    },
     addSelectedProduct(product) {
+      console.log(product);
       // Verificar si el producto ya está en el arreglo
       const exists = this.selectedProducts.some(
         (p) => p.codigo === product.codigo
