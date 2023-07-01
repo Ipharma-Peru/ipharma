@@ -10,7 +10,7 @@
         <div class="card-body">
           <form @submit.prevent="addForm()" ref="formCreate">
             <div class="row">
-              <div class="col-8">
+              <div class="col-7">
                 <div class="form-group">
                   <label for="descripcion" class="form-label"
                     >Descripción</label
@@ -21,6 +21,24 @@
                     id="descripcion"
                     v-model="formData.description"
                   />
+                </div>
+              </div>
+              <div class="col-1">
+                <div class="form-group">
+                  <label for="clase" class="form-label">Clase</label>
+                  <select
+                    class="form-select"
+                    id="clase"
+                    v-model="formData.tipoAfectacion"
+                  >
+                    <option
+                      v-for="afetacion in afectaciones"
+                      :key="afetacion.id"
+                      :value="afetacion.id"
+                    >
+                      {{ afetacion.descripcion }}
+                    </option>
+                  </select>
                 </div>
               </div>
               <div class="col-2">
@@ -128,6 +146,7 @@
                     class="form-control"
                     id="pvpBlister"
                     v-model="formData.pvpBlister"
+                    disabled
                   />
                 </div>
               </div>
@@ -325,6 +344,7 @@ export default {
         selectedLaboratorio,
         selectedPrincipios,
         selectedactionPharma,
+        tipoAfectacion,
       } = this.formData;
 
       return (
@@ -339,7 +359,8 @@ export default {
         !selectedPresentacion ||
         !selectedLaboratorio ||
         !selectedPrincipios ||
-        !selectedactionPharma
+        !selectedactionPharma ||
+        !tipoAfectacion
       );
     },
   },
@@ -366,7 +387,13 @@ export default {
         selectedLaboratorio: "",
         selectedPrincipios: "",
         selectedactionPharma: "",
+        tipoAfectacion: "",
       },
+      afectaciones: [
+          { id: 1, descripcion: "GRAVADAS" },
+          { id: 2, descripcion: "EXONERADAS" },
+          { id: 3, descripcion: "INAFECTAS" },
+        ],
     };
   },
   mounted() {
@@ -438,6 +465,7 @@ export default {
               selectedLaboratorio: "",
               selectedPrincipios: "",
               selectedactionPharma: "",
+              tipoAfectacion:"",
             };
           }
         })
