@@ -10,41 +10,35 @@ use Illuminate\Support\Facades\DB;
 class VentaController extends Controller
 {
 
-
     public function getProductsByCode(Request $request)
     {
-        return [
-            'marca' => $this->getProductByType($request->codigo, 'MARCA'),
-            'generico' => $this->getProductByType($request->codigo, 'GENERICO')
-        ];
+        $product = Product::where('codigo', $request->codigo)->first();
+        $principiosId = $product->activeSubstances->pluck('id');
+
+        if (count($principiosId) === 0) {
+            $categoriaId = $product->productSubclass->id;
+            return [
+                'marca' => $this->getProductByCategory($categoriaId)
+            ];
+        } else {
+            return [
+                'marca' => $this->getProductByActive($principiosId, 'MARCA'),
+                'generico' => $this->getProductByActive($principiosId, 'GENERICO')
+            ];
+        }
+
     }
 
-    public function getProductByType(string $codigo, string $tipoProducto)
+    protected function getProductByActive($principiosId, string $tipoProducto)
     {
-        $product = Product::where('codigo', $codigo)->first();
-        $principiosId = $product->activeSubstances->pluck('id');
         return Product::join('active_substance_product','products.id','active_substance_product.product_id')
         ->join('product_prices','product_prices.id','products.id')
         ->join('laboratories','laboratories.id','products.laboratory_id')
         ->join('inventories','inventories.product_id','products.id')
         ->join('presentations','presentations.id','products.presentation_id')
         ->join('product_subclasses','products.product_subclass_id','product_subclasses.id')
+        ->join('lots','inventories.lot_id','lots.id')
         ->select(
-            'products.id',
-            'products.codigo',
-            'products.descripcion as product_description',
-            'products.activo',
-            'presentations.presentacion',
-            'product_prices.precio_unidad',
-            'product_prices.precio_blister',
-            'product_prices.precio_caja',
-            'laboratories.nombre_laboratorio',
-            DB::raw('SUM(inventories.stock) as stock'),
-            'product_subclasses.descripcion'
-        )
-        ->where('product_subclasses.descripcion', $tipoProducto)
-        ->whereIn('active_substance_product.active_substance_id', $principiosId)
-        ->groupBy(
             'products.id',
             'products.codigo',
             'products.descripcion',
@@ -54,8 +48,60 @@ class VentaController extends Controller
             'product_prices.precio_blister',
             'product_prices.precio_caja',
             'laboratories.nombre_laboratorio',
-            'product_subclasses.descripcion'
-            )
+            'lots.numero_lote',
+            'lots.fecha_vencimiento'
+            // DB::raw('SUM(inventories.stock) as stock'),
+        )
+        ->where('product_subclasses.descripcion', $tipoProducto)
+        ->whereIn('active_substance_product.active_substance_id', $principiosId)
+        // ->groupBy(
+        //     'products.id',
+        //     'products.codigo',
+        //     'products.descripcion',
+        //     'products.activo',
+        //     'presentations.presentacion',
+        //     'product_prices.precio_unidad',
+        //     'product_prices.precio_blister',
+        //     'product_prices.precio_caja',
+        //     'laboratories.nombre_laboratorio',
+        //     )
+        ->get();
+    }
+
+    protected function getProductByCategory(int $subClassId)
+    {
+        return Product::join('product_prices','product_prices.id','products.id')
+        ->join('laboratories','laboratories.id','products.laboratory_id')
+        ->join('inventories','inventories.product_id','products.id')
+        ->join('presentations','presentations.id','products.presentation_id')
+        ->join('product_subclasses','products.product_subclass_id','product_subclasses.id')
+        ->join('lots','inventories.lot_id','lots.id')
+        ->select(
+            'products.id',
+            'products.codigo',
+            'products.descripcion',
+            'products.activo',
+            'presentations.presentacion',
+            'product_prices.precio_unidad',
+            'product_prices.precio_blister',
+            'product_prices.precio_caja',
+            'laboratories.nombre_laboratorio',
+            'lots.numero_lote',
+            'lots.fecha_vencimiento'
+            // DB::raw('SUM(inventories.stock) as stock'),
+        )
+        ->where('products.product_subclass_id', $subClassId)
+        // ->groupBy(
+        //     'products.id',
+        //     'products.codigo',
+        //     'products.descripcion',
+        //     'products.activo',
+        //     'presentations.presentacion',
+        //     'product_prices.precio_unidad',
+        //     'product_prices.precio_blister',
+        //     'product_prices.precio_caja',
+        //     'laboratories.nombre_laboratorio',
+        //     )
         ->get();
     }
 }
