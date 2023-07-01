@@ -98,7 +98,6 @@
               <table class="table table-striped table-hover mb-0">
                 <thead>
                   <tr>
-                    <th class="col-1">Action</th>
                     <th class="col-1">Ítem</th>
                     <th class="col-3">Artículo</th>
                     <th class="col-1">Lote</th>
@@ -107,18 +106,11 @@
                     <th class="col-1">Cantidad</th>
                     <th class="col-1">P. X</th>
                     <th class="col-1">Total</th>
+                    <th class="col-1">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(product, index) in selectedProducts" :key="index">
-                    <td>
-                      <button
-                        class="btn icon btn-primary btn-sm"
-                        @click="removeProduct(index)"
-                      >
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </td>
                     <td>{{ index + 1 }}</td>
                     <td>{{ product.descripcion }}</td>
                     <td>{{ product.numero_lote }}</td>
@@ -155,6 +147,14 @@
                       }}
                     </td>
                     <td>{{ calculateTotalPrice(product) }}</td>
+                    <td>
+                      <button
+                        class="btn icon btn-primary btn-sm"
+                        @click="removeProduct(index)"
+                      >
+                        <i class="bi bi-trash-fill"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -437,22 +437,56 @@ export default {
       this.selected.labMarca = nombre_laboratorio;
     },
     addSelectedProduct(product) {
-      console.log(product);
-      // Verificar si el producto ya está en el arreglo
-      const exists = this.selectedProducts.some(
+      const existingProductIndex = this.selectedProducts.findIndex(
         (p) => p.codigo === product.codigo
       );
 
-      // Verificar si el stock del producto es mayor a 0
-      const hasStock = product.stock > 0;
+      // Verificar si el producto ya existe en el arreglo
+      const exists = existingProductIndex !== -1;
 
-      // Si no existe y tiene stock, agregar el producto al arreglo
-      if (!exists && hasStock) {
-        product.selected = false;
-        product.quantity = 0;
-        this.selectedProducts.push(product);
+      if (exists) {
+        // Si el producto ya existe, obtener el producto existente
+        const existingProduct = this.selectedProducts[existingProductIndex];
+
+        // Buscar el producto en this.products
+        const productInProducts = this.products.find(
+          (p) => p.codigo === product.codigo
+        );
+
+        // Verificar si se encontró el producto en this.products
+        if (productInProducts) {
+          // Sumar los stocks del producto duplicado y existente
+          const totalStock = existingProduct.stock + productInProducts.stock;
+
+          // Verificar si el total del stock es mayor a 0
+          if (totalStock > 0) {
+            // Actualizar el stock del producto existente
+            existingProduct.stock = totalStock;
+
+            // Reemplazar el producto existente en el arreglo
+            this.selectedProducts.splice(
+              existingProductIndex,
+              1,
+              existingProduct
+            );
+          } else {
+            // Si el total del stock es menor o igual a 0, eliminar el producto existente del arreglo
+            this.selectedProducts.splice(existingProductIndex, 1);
+          }
+        }
+      } else {
+        // Si el producto no existe en el arreglo, realizar validaciones adicionales
+        if (
+          product.stock > 0 &&
+          this.products.some((p) => p.codigo === product.codigo)
+        ) {
+          product.selected = false;
+          product.quantity = 0;
+          this.selectedProducts.push(product);
+        }
       }
     },
+
     updateProduct(index) {
       console.log(this.selectedProducts[index]);
 
