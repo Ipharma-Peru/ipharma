@@ -16,16 +16,47 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
-    Route::group(['prefix' => 'components', 'as' => 'components.'], function() {
-        Route::get('/alert', function () {
+    Route::get('/blogs', function () {
+        return view('blogs');
+    })->name('blogs');
+    // Route::group(['prefix' => 'components', 'as' => 'components.'], function() {
+    //     Route::get('/alert', function () {
+    //         return view('admin.component.alert');
+    //     })->name('alert');
+    //     Route::get('/accordion', function () {
+    //         return view('admin.component.accordion');
+    //     })->name('accordion');
+    // });
+    Route::group(['prefix' => 'caja', 'as' => 'caja.'], function() {
+        Route::get('/apertura', function () {
             return view('admin.component.alert');
-        })->name('alert');
-        Route::get('/accordion', function () {
-            return view('admin.component.accordion');
-        })->name('accordion');
+        })->name('apertura');
+        Route::get('/ventas', function () {
+            return view('admin.caja.ventas');
+        })->name('ventas');
     });
+    Route::group(['prefix' => 'inventario', 'as' => 'inventario.'], function() {
+        Route::get('/products', function () {
+            return view('admin.inventory.products');
+        })->name('products');
+         Route::get('products/{any}', function () {
+            return view('admin.inventory.products');
+        })->where('any', '.*');
+        Route::get('/shopping', function () {
+            return view('admin.inventory.shopping');
+        })->name('shopping');
+        Route::get('shopping/{any}', function () {
+            return view('admin.inventory.shopping');
+        })->where('any', '.*');
+       
+       
+    });
+    // Route::get('/{any}', function () {
+    //     return view('blogs');
+    // })->where('any', '.*');
 });

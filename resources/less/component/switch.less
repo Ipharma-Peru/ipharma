@@ -1,0 +1,47 @@
+.custom-switch {
+    width: auto;
+    position: relative;
+    border-radius: 30px;
+    background: #fff;
+    border: #435ebe 1px solid;
+    margin-bottom: 0.5rem;
+
+
+    .toggle-btn {
+        padding: .3rem .8rem;
+        cursor: pointer;
+        background: transparent;
+        border: 0;
+        outline: none;
+        position: relative;
+        text-align: center;
+        color: #435ebe;
+        
+        @media (min-width: 576px) {
+            padding: .5rem 1.5rem;
+        }
+        // media para menor a 100px
+        
+
+        &.active {
+            color: #fff;
+        }
+
+    }
+
+    .btn-custom {
+        left: -1px;
+        right: 1px;
+        top: 0;
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        background: #435ebe;
+        border-radius: 30px;
+        transition: 0.5s;
+        border: #435ebe 1px solid;
+        &.right{
+            left: 51%;
+        }
+    }
+}
