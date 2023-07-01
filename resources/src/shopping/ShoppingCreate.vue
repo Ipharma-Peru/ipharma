@@ -89,7 +89,7 @@
                       <th class="col-1">Lote</th>
                       <th class="col-1">F. Vencimiento</th>
                       <th class="col-1">Cantidad</th>
-                      <th class="col-1">Precio</th>
+                      <th class="col-1">Precio Unitario</th>
                       <th class="col-1">Total</th>
                     </tr>
                   </thead>
