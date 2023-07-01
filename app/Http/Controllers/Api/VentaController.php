@@ -50,7 +50,8 @@ class VentaController extends Controller
             'product_prices.precio_caja',
             'laboratories.nombre_laboratorio',
             'lots.numero_lote',
-            'lots.fecha_vencimiento'
+            'lots.fecha_vencimiento',
+            'inventories.stock',
             // DB::raw('SUM(inventories.stock) as stock'),
         )
         ->where('product_subclasses.descripcion', $tipoProducto)
@@ -89,7 +90,8 @@ class VentaController extends Controller
             'product_prices.precio_caja',
             'laboratories.nombre_laboratorio',
             'lots.numero_lote',
-            'lots.fecha_vencimiento'
+            'lots.fecha_vencimiento',
+            'inventories.stock'
             // DB::raw('SUM(inventories.stock) as stock'),
         )
         ->where('products.product_subclass_id', $subClassId)
