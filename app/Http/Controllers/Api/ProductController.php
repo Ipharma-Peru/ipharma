@@ -167,7 +167,7 @@ class ProductController extends Controller
     public function generateProductCode()
     {
         $code = Product::where('deleted', 0)->select('codigo')->orderBy('codigo', 'DESC')->first();
-        $code = (int)$code->codigo + 1;
+        $code = ($code === null) ? 1000 : (int)$code->codigo + 1;
         $code = str_pad($code, 8, '0', STR_PAD_LEFT);
         return $code;
     }
