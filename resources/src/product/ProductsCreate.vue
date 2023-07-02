@@ -90,6 +90,7 @@
                         class="form-check-input form-check-primary form-check-glow"
                         id="fraccionable"
                         v-model="formData.fraccionable"
+                         @change="clearFraccionableFields"
                       />
                       <label class="form-check-label" for="fraccionable"
                         >Fraccionable</label
@@ -106,6 +107,7 @@
                     class="form-control"
                     id="pvpX"
                     v-model="formData.pvpx"
+                    required
                   />
                 </div>
               </div>
@@ -357,13 +359,13 @@ export default {
         !selectedSubclase ||
         unidadesByCaja < 0 ||
         unidadesByBlister < 0 ||
-        pvpx < 0 ||
+        !pvpx ||
         pvpBlister < 0 ||
         pvpFraccion < 0 ||
         !selectedPresentacion ||
         !selectedLaboratorio ||
-        !selectedPrincipios ||
-        !selectedactionPharma ||
+        // !selectedPrincipios ||
+        // !selectedactionPharma ||
         !tipoAfectacion
       );
     },
@@ -382,16 +384,16 @@ export default {
         selectedClass: "",
         selectedSubclase: "",
         fraccionable: false,
-        unidadesByCaja: 0,
-        unidadesByBlister: 0,
-        pvpx: 0,
-        pvpFraccion: 0,
-        pvpBlister: 0,
+        unidadesByCaja: "",
+        unidadesByBlister: "",
+        pvpx: "",
+        pvpFraccion: "",
+        pvpBlister: "",
         selectedPresentacion: "",
         selectedLaboratorio: "",
         selectedPrincipios: "",
         selectedactionPharma: "",
-        tipoAfectacion: "",
+        tipoAfectacion: 1,
       },
       afectaciones: [
         { id: 1, descripcion: "GRAVADAS" },
@@ -477,6 +479,12 @@ export default {
           // Lógica para manejar el error de la solicitud
         });
     },
+    clearFraccionableFields() {
+    if (!this.formData.fraccionable) {
+      this.formData.pvpFraccion = '';
+      this.formData.unidadesByCaja = '';
+    }
+  },
   },
 };
 </script>

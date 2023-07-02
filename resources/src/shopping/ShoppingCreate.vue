@@ -218,7 +218,7 @@ export default {
       ],
       formData: {
         proveedores: "",
-        proveedorId: null,
+        proveedorId: "",
         fechaFactura: "",
         factura: "",
       },
@@ -248,6 +248,7 @@ export default {
       const formDataFieldsFilled = Object.values(this.formData).every(
         (value) => value !== ""
       );
+      console.log(formDataFieldsFilled)
 
       return itemsFieldsFilled && formDataFieldsFilled;
     },

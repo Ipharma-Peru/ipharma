@@ -51,12 +51,14 @@
                     v-model="cliente.dni"
                     @keydown.enter="fetchClienteData"
                     @input="handleDNIInput"
+                    :disabled="cliente.selectedDocument === 1"
                   />
                   <button
                     type="button"
                     class="btn btn-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#clientePopup"
+                    :disabled="cliente.selectedDocument === 1"
                   >
                     +
                   </button>
@@ -175,6 +177,13 @@
                 <h5 class="ps-5">S/ {{ total }}</h5>
               </div>
             </div>
+            <button
+              class="btn btn-primary"
+              @click="sendData"
+              :disabled="disableVenderButton"
+            >
+              Vender
+            </button>
           </div>
         </div>
       </div>
@@ -367,37 +376,61 @@ export default {
       generico: [],
       selectedProducts: [],
       cliente: {
-        selectedDocument: "",
+        selectedDocument: 1,
         document: [
-          { id: 0, name: "Con DNI" },
+          { id: 2, name: "DNI" },
           { id: 1, name: "Sin documento" },
         ],
+        idCliente: "",
         dni: "",
         razonSocial: "",
         direccion: "",
       },
     };
   },
+  watch: {
+    "cliente.selectedDocument": function (newVal) {
+      if (newVal === 1) {
+        this.cliente.dni = "";
+        this.cliente.razonSocial = "";
+        this.cliente.direccion = "";
+      }
+    },
+  },
   mounted() {},
   computed: {
+    disableVenderButton() {
+      if (this.cliente.selectedDocument === 1) {
+        return (
+          this.selectedProducts.length === 0 ||
+          this.selectedProducts.some((product) => product.quantity <= 0)
+        );
+      } else {
+        return (
+          this.selectedProducts.length === 0 ||
+          this.selectedProducts.some((product) => product.quantity <= 0) ||
+          !this.cliente.idCliente
+        );
+      }
+    },
     // --------Sumatoria de Productos----------
     subTotal() {
-      let total = 0;
-      for (let product of this.selectedProducts) {
-        total += parseFloat(product.total_price) || 0;
-      }
-      return total.toFixed(2);
+      const subTotal = parseFloat(this.total) || 0;
+      const igv = parseFloat(this.igv) || 0;
+      return (subTotal - igv).toFixed(2);
     },
     igv() {
-      const subTotal = parseFloat(this.subTotal) || 0;
+      const subTotal = parseFloat(this.total) || 0;
       const igvPercentage = 0.18; // Porcentaje de IGV (18%)
       const igvAmount = subTotal * igvPercentage;
       return igvAmount.toFixed(2);
     },
     total() {
-      const subTotal = parseFloat(this.subTotal) || 0;
-      const igv = parseFloat(this.igv) || 0;
-      return (subTotal + igv).toFixed(2);
+      let total = 0;
+      for (let product of this.selectedProducts) {
+        total += parseFloat(product.total_price) || 0;
+      }
+      return total.toFixed(2);
     },
   },
   methods: {
@@ -406,7 +439,6 @@ export default {
         axios
           .post("/api/products", { search: this.searchTerm })
           .then((response) => {
-            console.log(response);
             this.products = response.data;
           })
           .catch((error) => {
@@ -421,7 +453,6 @@ export default {
           codigo: product.codigo,
         })
         .then((response) => {
-          console.log(response);
           const { generico, marca } = response.data;
           this.generico = generico;
           this.marca = marca;
@@ -437,64 +468,27 @@ export default {
       this.selected.labMarca = nombre_laboratorio;
     },
     addSelectedProduct(product) {
-      const existingProductIndex = this.selectedProducts.findIndex(
+      // Verificar si el producto ya está en el arreglo
+      const exists = this.selectedProducts.some(
         (p) => p.codigo === product.codigo
       );
 
-      // Verificar si el producto ya existe en el arreglo
-      const exists = existingProductIndex !== -1;
+      // Verificar si el stock del producto es mayor a 0
+      const hasStock = product.stock > 0;
 
-      if (exists) {
-        // Si el producto ya existe, obtener el producto existente
-        const existingProduct = this.selectedProducts[existingProductIndex];
-
-        // Buscar el producto en this.products
-        const productInProducts = this.products.find(
-          (p) => p.codigo === product.codigo
-        );
-
-        // Verificar si se encontró el producto en this.products
-        if (productInProducts) {
-          // Sumar los stocks del producto duplicado y existente
-          const totalStock = existingProduct.stock + productInProducts.stock;
-
-          // Verificar si el total del stock es mayor a 0
-          if (totalStock > 0) {
-            // Actualizar el stock del producto existente
-            existingProduct.stock = totalStock;
-
-            // Reemplazar el producto existente en el arreglo
-            this.selectedProducts.splice(
-              existingProductIndex,
-              1,
-              existingProduct
-            );
-          } else {
-            // Si el total del stock es menor o igual a 0, eliminar el producto existente del arreglo
-            this.selectedProducts.splice(existingProductIndex, 1);
-          }
-        }
-      } else {
-        // Si el producto no existe en el arreglo, realizar validaciones adicionales
-        if (
-          product.stock > 0 &&
-          this.products.some((p) => p.codigo === product.codigo)
-        ) {
-          product.selected = false;
-          product.quantity = 0;
-          this.selectedProducts.push(product);
-        }
+      // Si no existe y tiene stock, agregar el producto al arreglo
+      if (!exists && hasStock) {
+        product.selected = false;
+        product.quantity = 0;
+        this.selectedProducts.push(product);
       }
     },
 
     updateProduct(index) {
-      console.log(this.selectedProducts[index]);
-
       const inputValue = this.selectedProducts[index].quantity;
 
       const isChecked = this.selectedProducts[index].selected;
 
-      console.log(isChecked);
       if (isChecked) {
         this.selectedProducts[index].total_price = (
           inputValue * this.selectedProducts[index].precio_unidad
@@ -524,31 +518,33 @@ export default {
             document: this.cliente.dni,
           })
           .then((response) => {
+            const toastParams = {
+              duration: 3000,
+              close: true,
+              gravity: "bottom",
+              position: "left",
+            };
+
             if (response.data.length > 0) {
+              const cliente = response.data[0];
+              this.cliente.razonSocial = cliente.nombre;
+              this.cliente.idCliente = cliente.id;
+              this.cliente.direccion = "Av Arica 123 Breña";
+
               Toastify({
                 text: "¡Cargando!",
-                duration: 3000,
-                close: true,
-                gravity: "bottom", // `top` or `bottom`
-                position: "left", // `left`, `center` or `right`
+                ...toastParams,
                 style: {
                   background: "linear-gradient(to right, #00b09b, #96c93d)",
                 },
               }).showToast();
-              console.log(response);
-              const cliente = response.data[0];
-              this.cliente.razonSocial = cliente.nombre;
-              this.cliente.direccion = "Av Arica 123 Breña";
             } else {
               Toastify({
-                text: "¡No existe, agregalo!",
-                duration: 3000,
-                close: true,
-                gravity: "bottom", // `top` or `bottom`
-                position: "left", // `left`, `center` or `right`
+                text: "¡No existe, agrégalo!",
+                ...toastParams,
                 style: {
                   background: "linear-gradient(to right, #ff5733, #ff8f33)",
-                  color: "#fff", // Cambiar el color del texto a blanco
+                  color: "#fff",
                 },
               }).showToast();
             }
@@ -576,6 +572,55 @@ export default {
     clearRazonSocialAndDireccion() {
       this.cliente.razonSocial = "";
       this.cliente.direccion = "";
+    },
+    sendData() {
+      const items = this.selectedProducts.map((item) => {
+        return {
+          idProducto: item.product_id,
+          fraccion: item.selected,
+          cantidad: item.quantity,
+          precio: item.selected ? item.precio_unidad : item.precio_caja,
+        };
+      });
+
+      const data = {
+        tipoDocumento: this.cliente.selectedDocument,
+        idCliente: this.cliente.idCliente,
+        items: items,
+        fecha_emision: new Date().toISOString().split("T")[0],
+      };
+      axios
+        .post("/api/ventas/registrar", data)
+        .then((response) => {
+          const toastParams = {
+            duration: 3000,
+            close: true,
+            gravity: "bottom",
+            position: "left",
+          };
+          if (response.data.status) {
+            Toastify({
+              text: "¡Guardado!",
+              ...toastParams,
+              style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+              },
+            }).showToast();
+          } else {
+            Toastify({
+              text: response.data.message,
+              ...toastParams,
+              style: {
+                background: "linear-gradient(to right, #ff5733, #ff8f33)",
+                color: "#fff",
+              },
+            }).showToast();
+          }
+        })
+        .catch((error) => {
+          // Manejar el error si ocurre
+          console.error(error);
+        });
     },
   },
 };
