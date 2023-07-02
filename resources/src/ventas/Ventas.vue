@@ -177,7 +177,13 @@
                 <h5 class="ps-5">S/ {{ total }}</h5>
               </div>
             </div>
-            <button class="btn btn-primary" @click="sendData">Vender</button>
+            <button
+              class="btn btn-primary"
+              @click="sendData"
+              :disabled="disableVenderButton"
+            >
+              Vender
+            </button>
           </div>
         </div>
       </div>
@@ -393,24 +399,38 @@ export default {
   },
   mounted() {},
   computed: {
+    disableVenderButton() {
+      if (this.cliente.selectedDocument === 1) {
+        return (
+          this.selectedProducts.length === 0 ||
+          this.selectedProducts.some((product) => product.quantity <= 0)
+        );
+      } else {
+        return (
+          this.selectedProducts.length === 0 ||
+          this.selectedProducts.some((product) => product.quantity <= 0) ||
+          !this.cliente.idCliente
+        );
+      }
+    },
     // --------Sumatoria de Productos----------
     subTotal() {
-      let total = 0;
-      for (let product of this.selectedProducts) {
-        total += parseFloat(product.total_price) || 0;
-      }
-      return total.toFixed(2);
+      const subTotal = parseFloat(this.total) || 0;
+      const igv = parseFloat(this.igv) || 0;
+      return (subTotal - igv).toFixed(2);
     },
     igv() {
-      const subTotal = parseFloat(this.subTotal) || 0;
+      const subTotal = parseFloat(this.total) || 0;
       const igvPercentage = 0.18; // Porcentaje de IGV (18%)
       const igvAmount = subTotal * igvPercentage;
       return igvAmount.toFixed(2);
     },
     total() {
-      const subTotal = parseFloat(this.subTotal) || 0;
-      const igv = parseFloat(this.igv) || 0;
-      return (subTotal + igv).toFixed(2);
+      let total = 0;
+      for (let product of this.selectedProducts) {
+        total += parseFloat(product.total_price) || 0;
+      }
+      return total.toFixed(2);
     },
   },
   methods: {
@@ -419,7 +439,6 @@ export default {
         axios
           .post("/api/products", { search: this.searchTerm })
           .then((response) => {
-            console.log(response);
             this.products = response.data;
           })
           .catch((error) => {
@@ -434,7 +453,6 @@ export default {
           codigo: product.codigo,
         })
         .then((response) => {
-          console.log(response);
           const { generico, marca } = response.data;
           this.generico = generico;
           this.marca = marca;
@@ -467,13 +485,10 @@ export default {
     },
 
     updateProduct(index) {
-      console.log(this.selectedProducts[index]);
-
       const inputValue = this.selectedProducts[index].quantity;
 
       const isChecked = this.selectedProducts[index].selected;
 
-      console.log(isChecked);
       if (isChecked) {
         this.selectedProducts[index].total_price = (
           inputValue * this.selectedProducts[index].precio_unidad
@@ -523,8 +538,6 @@ export default {
                   background: "linear-gradient(to right, #00b09b, #96c93d)",
                 },
               }).showToast();
-
-              console.log(response);
             } else {
               Toastify({
                 text: "¡No existe, agrégalo!",
@@ -576,12 +589,9 @@ export default {
         items: items,
         fecha_emision: new Date().toISOString().split("T")[0],
       };
-      console.log(data);
-      debugger;
       axios
         .post("/api/ventas/registrar", data)
         .then((response) => {
-          console.log(response)
           const toastParams = {
             duration: 3000,
             close: true,
