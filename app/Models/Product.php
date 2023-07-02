@@ -65,4 +65,9 @@ class Product extends Model
     {
         return $this->belongsTo('App\Models\PriceType');
     }
+
+    public function saleDetails()
+    {
+        return $this->hasMany('App\Models\SaleDetail');
+    }
 }
