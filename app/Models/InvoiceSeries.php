@@ -5,15 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Client extends Model
+class InvoiceSeries extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function person()
+    public function invoiceType()
     {
-        return $this->belongsTo('App\Models\Person');
+        return $this->belongsTo('App\Models\InvoiceType');
+    }
+
+    public function invoiceNumber()
+    {
+        return $this->belongsTo('App\Models\InvoiceNumber');
     }
 
     public function sales()

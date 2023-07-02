@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('presentation_details', function (Blueprint $table) {
+        Schema::create('invoice_types', function (Blueprint $table) {
             $table->id();
-            $table->integer('unidades_por_caja')->nullable();
-            $table->integer('unidades_por_blister')->nullable();
+            $table->string('codigo', 5);
+            $table->string('descripcion', 20);
+            $table->boolean('activo')->default(true);
             $table->boolean('deleted')->default(false);
-            $table->foreignId('product_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('presentation_details');
+        Schema::dropIfExists('invoice_types');
     }
 };
