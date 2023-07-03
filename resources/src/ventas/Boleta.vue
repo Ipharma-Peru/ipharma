@@ -18,6 +18,9 @@
           ></button>
         </div>
         <div class="modal-body">
+          <div class="">
+            <h4>Pagar: <span class="badge bg-secondary">S/ {{ total }}</span></h4>
+          </div>
           <div class="mb-3">
             <label for="monto-pago" class="col-form-label"
               >Monto de Pago:</label
@@ -31,8 +34,7 @@
             />
           </div>
           <div class="mb-3">
-            <label class="col-form-label">Resta del Monto:</label>
-            <span>{{ restaMonto }}</span>
+            <h4>Vuelto: <span class="badge bg-success">S/ {{ restaMonto }}</span></h4>
           </div>
           <div class="mb-3 form-check">
             <input
@@ -71,19 +73,24 @@ export default {
       montoPago: 0,
       restaMonto: 0,
       pagoConTarjeta: false,
+      total: 0, // Agrega la propiedad total
     };
+  },
+  created() {
+    this.calculateTotal(); // Calcula el total al crear el componente
+  },
+  watch: {
+    datos: {
+      handler() {
+        this.calculateTotal(); // Calcula el total cuando se actualizan los datos
+      },
+      deep: true,
+    },
   },
   methods: {
     calculateRest() {
-      let subtotal = 0;
-
-      // Iterar en this.datos.items
-      this.datos.items.forEach((item) => {
-        const cantidad = item.cantidad;
-        const precio = item.precio;
-        subtotal += cantidad * precio;
-      });
-      this.restaMonto = this.montoPago - subtotal;
+      
+      this.restaMonto = (this.montoPago - this.total).toFixed(2);
     },
     procesarPago() {
       console.log(this.datos);
@@ -119,6 +126,17 @@ export default {
           // Manejar el error si ocurre
           console.error(error);
         });
+    },
+    calculateTotal() {
+      let total = 0;
+      if (this.datos && this.datos.items) {
+        this.datos.items.forEach((item) => {
+          const cantidad = item.cantidad;
+          const precio = item.precio;
+          total += parseFloat(cantidad * precio);
+        });
+      }
+      this.total = total.toFixed(2);
     },
   },
 };
