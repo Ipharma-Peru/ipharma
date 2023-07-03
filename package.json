@@ -24,6 +24,7 @@
         "vite": "^4.3.9"
     },
     "dependencies": {
+        "@abrazasoft/thermal_printer_vuejs": "^1.0.2",
         "@vitejs/plugin-vue": "^4.2.3",
         "bootstrap-icons": "^1.9.0",
         "less": "^4.1.3",

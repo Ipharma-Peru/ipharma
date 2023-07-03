@@ -181,6 +181,8 @@
               class="btn btn-primary"
               @click="sendData"
               :disabled="disableVenderButton"
+              data-bs-toggle="modal"
+              data-bs-target="#pagoPopup"
             >
               Vender
             </button>
@@ -351,17 +353,20 @@
         </div>
       </div>
     </div>
+    <Print :datos="datos"></Print>
   </section>
 </template>
 
 <script>
 import ClientePopup from "./popup/ClientePopup.vue";
+import Print from "./Boleta.vue";
 import axios from "axios";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 export default {
   components: {
     ClientePopup,
+    Print,
   },
   data() {
     return {
@@ -386,12 +391,14 @@ export default {
         razonSocial: "",
         direccion: "",
       },
+      datos: [],
     };
   },
   watch: {
     "cliente.selectedDocument": function (newVal) {
       if (newVal === 1) {
         this.cliente.dni = "";
+        this.cliente.idCliente = "";
         this.cliente.razonSocial = "";
         this.cliente.direccion = "";
       }
@@ -483,7 +490,6 @@ export default {
         this.selectedProducts.push(product);
       }
     },
-
     updateProduct(index) {
       const inputValue = this.selectedProducts[index].quantity;
 
@@ -555,6 +561,7 @@ export default {
       } else {
         this.cliente.razonSocial = "";
         this.cliente.direccion = "";
+        this.cliente.idCliente = "";
       }
     },
     handleDNIInput(event) {
@@ -572,6 +579,7 @@ export default {
     clearRazonSocialAndDireccion() {
       this.cliente.razonSocial = "";
       this.cliente.direccion = "";
+      this.cliente.idCliente = "";
     },
     sendData() {
       const items = this.selectedProducts.map((item) => {
@@ -583,44 +591,12 @@ export default {
         };
       });
 
-      const data = {
+      this.datos = {
         tipoDocumento: this.cliente.selectedDocument,
         idCliente: this.cliente.idCliente,
         items: items,
         fecha_emision: new Date().toISOString().split("T")[0],
       };
-      axios
-        .post("/api/ventas/registrar", data)
-        .then((response) => {
-          const toastParams = {
-            duration: 3000,
-            close: true,
-            gravity: "bottom",
-            position: "left",
-          };
-          if (response.data.status) {
-            Toastify({
-              text: "¡Guardado!",
-              ...toastParams,
-              style: {
-                background: "linear-gradient(to right, #00b09b, #96c93d)",
-              },
-            }).showToast();
-          } else {
-            Toastify({
-              text: response.data.message,
-              ...toastParams,
-              style: {
-                background: "linear-gradient(to right, #ff5733, #ff8f33)",
-                color: "#fff",
-              },
-            }).showToast();
-          }
-        })
-        .catch((error) => {
-          // Manejar el error si ocurre
-          console.error(error);
-        });
     },
   },
 };
