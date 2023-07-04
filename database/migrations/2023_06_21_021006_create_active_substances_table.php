@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('active_substances', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 50);
-            $table->boolean('deleted')->default(false);
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }

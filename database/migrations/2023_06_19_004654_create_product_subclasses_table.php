@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('codigo', 20);
             $table->string('descripcion', 50);
-            $table->boolean('deleted')->default(false);
+            $table->boolean('activo')->default(true);
             $table->foreignId('product_class_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });
