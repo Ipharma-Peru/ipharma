@@ -82,6 +82,5 @@ Route::controller(ClientController::class)->group(function() {
 });
 
 Route::controller(InvoiceSeriesController::class)->group(function() {
-    Route::post('/documentos/conultarCorrelativo', 'store');
-    Route::post('/clientes/buscar', 'search');
+    Route::post('/documentos/conultarCorrelativo', 'getCorrelativeBySerieFront');
 });
