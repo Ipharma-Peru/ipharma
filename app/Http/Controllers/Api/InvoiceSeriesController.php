@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\InvoiceSeries;
+use Illuminate\Http\Request;
 
 class InvoiceSeriesController extends Controller
 {
@@ -14,6 +15,13 @@ class InvoiceSeriesController extends Controller
     public function getCorrelativeBySerie(string $serie)
     {
         return InvoiceSeries::where('serie', $serie)
+            ->where('activo', true)
+            ->value('correlativo');
+    }
+
+    public function getCorrelativeBySerieFront(Request $request)
+    {
+        return InvoiceSeries::where('serie', $request->serie)
             ->where('activo', true)
             ->value('correlativo');
     }
