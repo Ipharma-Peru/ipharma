@@ -67,7 +67,7 @@ class ProductController extends Controller
     {
         return [
             'clases' => ProductClass::where('deleted', 0)->select('id','codigo','descripcion')->get(),
-            'laboratorios' => Laboratory::where('deleted', 0)->select('id','codigo','nombre_laboratorio')->get(),
+            'laboratorios' => Laboratory::select('id','codigo','nombre_laboratorio')->get(),
             'presentaciones' => Presentation::where('deleted', 0)->select('id','presentacion')->get(),
             'principios' => ActiveSubstance::where('deleted', 0)->select('id','nombre')->get(),
             'acciones' => PharmaAction::where('deleted', 0)->select('id','nombre')->get()
