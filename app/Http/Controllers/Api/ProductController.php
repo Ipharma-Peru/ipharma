@@ -146,12 +146,12 @@ class ProductController extends Controller
             $presentation->product_id = $productId;
             $presentation->save();
 
-            $idPrincipios = array_column($request->selectedPrincipios,'id');
-            $idFarmacologicas = array_column($request->selectedactionPharma,'id');
             if ($idPrincipios !== null) {
+                $idPrincipios = array_column($request->selectedPrincipios,'id');
                 $product->activeSubstances()->attach($idPrincipios);
             }
             if ($idFarmacologicas !== null) {
+                $idFarmacologicas = array_column($request->selectedactionPharma,'id');
                 $product->pharmaActions()->attach($idFarmacologicas);
             }
 
