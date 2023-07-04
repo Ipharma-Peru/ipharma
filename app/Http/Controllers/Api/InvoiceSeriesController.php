@@ -23,7 +23,8 @@ class InvoiceSeriesController extends Controller
     {
         return InvoiceSeries::where('serie', $request->serie)
             ->where('activo', true)
-            ->value('correlativo');
+            ->select('correlativo')
+            ->first();
     }
 
     /**
