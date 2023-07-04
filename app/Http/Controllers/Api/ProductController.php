@@ -67,7 +67,7 @@ class ProductController extends Controller
     {
         return [
             'clases' => ProductClass::where('deleted', 0)->select('id','codigo','descripcion')->get(),
-            'laboratorios' => Laboratory::where('deleted', 0)->select('id','codigo','nombre_laboratorio')->get(),
+            'laboratorios' => Laboratory::select('id','codigo','nombre_laboratorio')->get(),
             'presentaciones' => Presentation::where('deleted', 0)->select('id','presentacion')->get(),
             'principios' => ActiveSubstance::where('deleted', 0)->select('id','nombre')->get(),
             'acciones' => PharmaAction::where('deleted', 0)->select('id','nombre')->get()
@@ -146,12 +146,12 @@ class ProductController extends Controller
             $presentation->product_id = $productId;
             $presentation->save();
 
-            $idPrincipios = array_column($request->selectedPrincipios,'id');
-            $idFarmacologicas = array_column($request->selectedactionPharma,'id');
             if ($idPrincipios !== null) {
+                $idPrincipios = array_column($request->selectedPrincipios,'id');
                 $product->activeSubstances()->attach($idPrincipios);
             }
             if ($idFarmacologicas !== null) {
+                $idFarmacologicas = array_column($request->selectedactionPharma,'id');
                 $product->pharmaActions()->attach($idFarmacologicas);
             }
 
