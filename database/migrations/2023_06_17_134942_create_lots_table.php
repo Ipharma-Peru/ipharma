@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('numero_lote', 50);
             $table->date('fecha_vencimiento');
             $table->date('fecha_produccion')->nullable();
-            $table->boolean('deleted')->default(false);
             $table->timestamps();
         });
     }

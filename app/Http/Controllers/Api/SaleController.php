@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\InvoiceSeriesController;
 use App\Http\Controllers\BoletaFactura;
 use App\Models\Sale;
 use App\Models\InvoiceStatus;
+use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\CompanyController;
 use App\NumerosEnLetras;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class SaleController extends Controller
         $store = $this->store($request);
 
         if ($store['status'] === true) {
-            return $this->enviarBoleta($store['saleId']);
+            return $this->enviarBoleta($store['saleId'], $request->tipoDocumento, $request->idCliente);
         }
     }
 
@@ -66,13 +67,13 @@ class SaleController extends Controller
 
     }
 
-    public function enviarBoleta(int $saleId)
+    public function enviarBoleta(int $saleId, int $tipoDocumento, mixed $clientId)
     {
         try {
 
             $emisor = $this->getDataCompany();
 
-            $cliente = $this->getDataClient();
+            $cliente = $this->getDataClient($tipoDocumento, $clientId);
 
             $detalle = $this->getDataItems($saleId);
 
@@ -196,13 +197,25 @@ class SaleController extends Controller
         return $detalles;
     }
 
-    public function getDataClient()
+    public function getDataClient(int $tipoDocumento, mixed $idCliente)
     {
+        if ($tipoDocumento == 1) {
+            return array(
+                'tipodoc'       => '1', //6: RUC, 1: DNI
+                'ruc'           => '00000000',
+                'razon_social'  => 'CLIENTE VARIOS',
+                'direccion'     => '',
+                'pais'          => 'PE', //codigo de pais
+            );
+        }
+
+        $cliente = new ClientController();
+        $cliente = $cliente->searchById($idCliente);
         return array(
             'tipodoc'       => '1', //6: RUC, 1: DNI
-            'ruc'           => '00000000',
-            'razon_social'  => 'CLIENTE VARIOS',
-            'direccion'     => '',
+            'ruc'           => $cliente->numero_documento,
+            'razon_social'  => $cliente->nombre,
+            'direccion'     => $cliente->direccion,
             'pais'          => 'PE', //codigo de pais
         );
     }

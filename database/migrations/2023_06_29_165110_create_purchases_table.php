@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->date('fecha_compra');
             $table->string('numero_documento', 15);
+            $table->boolean('deleted')->default(false);
             $table->foreignId('provider_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });

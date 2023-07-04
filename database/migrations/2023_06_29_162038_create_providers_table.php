@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('providers', function (Blueprint $table) {
             $table->id();
+            $table->boolean('active')->default(true);
             $table->foreignId('person_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });

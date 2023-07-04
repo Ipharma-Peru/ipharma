@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->integer('unidades_por_caja')->nullable();
             $table->integer('unidades_por_blister')->nullable();
-            $table->boolean('deleted')->default(false);
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });

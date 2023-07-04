@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('cantidad');
             $table->decimal('precio_unitario', 8, 2);
+            $table->boolean('deleted')->default(false);
             $table->foreignId('purchase_id')->constrained()->restrictOnDelete();
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
             $table->foreignId('lot_id')->constrained()->restrictOnDelete();

@@ -46,8 +46,6 @@ class ProductController extends Controller
             )
         ->where('products.descripcion','like', '%'. $search .'%')
         ->where('products.deleted',0)
-        ->where('presentations.deleted',0)
-        ->where('product_prices.deleted',0)
         // ->groupBy(
         //     'products.codigo',
         //     'products.descripcion',
@@ -66,11 +64,11 @@ class ProductController extends Controller
     public function getInitialData()
     {
         return [
-            'clases' => ProductClass::where('deleted', 0)->select('id','codigo','descripcion')->get(),
+            'clases' => ProductClass::select('id','codigo','descripcion')->get(),
             'laboratorios' => Laboratory::select('id','codigo','nombre_laboratorio')->get(),
-            'presentaciones' => Presentation::where('deleted', 0)->select('id','presentacion')->get(),
-            'principios' => ActiveSubstance::where('deleted', 0)->select('id','nombre')->get(),
-            'acciones' => PharmaAction::where('deleted', 0)->select('id','nombre')->get()
+            'presentaciones' => Presentation::select('id','presentacion')->get(),
+            'principios' => ActiveSubstance::select('id','nombre')->get(),
+            'acciones' => PharmaAction::select('id','nombre')->get()
         ];
     }
 
@@ -106,8 +104,6 @@ class ProductController extends Controller
             'laboratories.nombre_laboratorio'
             )
         ->where('products.deleted',0)
-        ->where('presentations.deleted',0)
-        ->where('product_prices.deleted',0)
         ->get();
     }
 
@@ -135,14 +131,12 @@ class ProductController extends Controller
             $price->precio_blister = $request->pvpBlister;
             $price->precio_unidad = $request->pvpFraccion;
             $price->activo = true;
-            $price->deleted = false;
             $price->product_id = $productId;
             $price->save();
 
             $presentation = new PresentationDetail();
             $presentation->unidades_por_caja = $request->unidadesByCaja;
             $presentation->unidades_por_blister = $request->unidadesByBlister;
-            $presentation->deleted = false;
             $presentation->product_id = $productId;
             $presentation->save();
 
@@ -173,7 +167,7 @@ class ProductController extends Controller
 
     public function generateProductCode()
     {
-        $code = Product::where('deleted', 0)->select('codigo')->orderBy('codigo', 'DESC')->first();
+        $code = Product::select('codigo')->orderBy('codigo', 'DESC')->first();
         $code = ($code === null) ? 1000 : (int)$code->codigo + 1;
         $code = str_pad($code, 8, '0', STR_PAD_LEFT);
         return $code;

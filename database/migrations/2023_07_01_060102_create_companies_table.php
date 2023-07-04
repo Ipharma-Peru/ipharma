@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('usuario_secundario');
             $table->string('clave_secundaria');
+            $table->boolean('active')->default(true);
             $table->foreignId('person_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });
