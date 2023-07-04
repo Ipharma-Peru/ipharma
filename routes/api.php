@@ -80,3 +80,8 @@ Route::controller(ClientController::class)->group(function() {
     Route::post('/clientes/registrar', 'store');
     Route::post('/clientes/buscar', 'search');
 });
+
+Route::controller(InvoiceSeriesController::class)->group(function() {
+    Route::post('/documentos/conultarCorrelativo', 'store');
+    Route::post('/clientes/buscar', 'search');
+});
