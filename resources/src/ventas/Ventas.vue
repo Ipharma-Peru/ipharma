@@ -392,7 +392,7 @@ export default {
         direccion: "",
       },
       datos: [],
-      correlativo:""
+      correlativo: "",
     };
   },
   watch: {
@@ -405,7 +405,7 @@ export default {
       }
     },
   },
-  mounted() { },
+  mounted() {},
   created() {
     this.fetchCorrelativo();
   },
@@ -433,7 +433,18 @@ export default {
     igv() {
       const subTotal = parseFloat(this.total) || 0;
       const igvPercentage = 0.18; // Porcentaje de IGV (18%)
-      const igvAmount = subTotal * igvPercentage;
+
+      // Filtrar los productos con afectacion "IGV"
+      const igvProducts = this.selectedProducts.filter(
+        (product) => product.afectacion === "IGV"
+      );
+
+      // Calcular el monto del IGV solo para los productos con afectacion "IGV"
+      const igvAmount =
+        igvProducts.reduce((total, product) => {
+          return total + (parseFloat(product.total_price) || 0);
+        }, 0) * igvPercentage;
+
       return igvAmount.toFixed(2);
     },
     total() {
@@ -611,13 +622,13 @@ export default {
       this.marca = [];
       this.generico = [];
       this.products = [];
-      this.fetchCorrelativo()
+      this.fetchCorrelativo();
     },
     fetchCorrelativo() {
       axios
         .post("/api/documentos/correlativo", { serie: "B001" })
         .then((response) => {
-          console.log(response)
+          console.log(response);
           this.correlativo = response.data.correlativo;
         })
         .catch((error) => {
