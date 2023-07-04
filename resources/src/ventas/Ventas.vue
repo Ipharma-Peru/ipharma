@@ -12,7 +12,7 @@
               <button type="button" class="toggle-btn">Factura</button>
             </div>
             <h4 class="card-title col-12 col-sm-6 text-center text-sm-end">
-              BO19819081098
+              B001-0000{{ correlativo }}
             </h4>
           </div>
         </div>
@@ -96,8 +96,8 @@
         </div>
         <div class="card">
           <div class="card-body">
-            <div class="table-responsive search">
-              <table class="table table-striped table-hover mb-0">
+            <div class="table-responsive productSelect">
+              <table class="table table-striped mb-0">
                 <thead>
                   <tr>
                     <th class="col-1">Ítem</th>
@@ -353,7 +353,7 @@
         </div>
       </div>
     </div>
-    <Print :datos="datos"></Print>
+    <Print :datos="datos" @pagoRealizado="limpiarAtributos"></Print>
   </section>
 </template>
 
@@ -392,6 +392,7 @@ export default {
         direccion: "",
       },
       datos: [],
+      correlativo:""
     };
   },
   watch: {
@@ -404,7 +405,10 @@ export default {
       }
     },
   },
-  mounted() {},
+  mounted() { },
+  created() {
+    this.fetchCorrelativo();
+  },
   computed: {
     disableVenderButton() {
       if (this.cliente.selectedDocument === 1) {
@@ -433,11 +437,11 @@ export default {
       return igvAmount.toFixed(2);
     },
     total() {
-      let total = 0;
-      for (let product of this.selectedProducts) {
-        total += parseFloat(product.total_price) || 0;
-      }
-      return total.toFixed(2);
+      return this.selectedProducts
+        .reduce((total, product) => {
+          return total + (parseFloat(product.total_price) || 0);
+        }, 0)
+        .toFixed(2);
     },
   },
   methods: {
@@ -598,6 +602,33 @@ export default {
         fecha_emision: new Date().toISOString().split("T")[0],
       };
     },
+    limpiarAtributos() {
+      this.selectedProducts = [];
+      this.clearRazonSocialAndDireccion();
+      this.cliente.dni = "";
+      this.cliente.selectedDocument = 1;
+      this.searchTerm = "";
+      this.marca = [];
+      this.generico = [];
+      this.products = [];
+      this.fetchCorrelativo()
+    },
+    fetchCorrelativo() {
+      axios
+        .post("/api/documentos/correlativo", { serie: "B001" })
+        .then((response) => {
+          console.log(response)
+          this.correlativo = response.data.correlativo;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
   },
 };
 </script>
+<style scoped>
+.search tbody tr:hover {
+  background-color: #435ebe34;
+}
+</style>

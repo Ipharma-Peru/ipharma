@@ -8,6 +8,6 @@
 <script src="{{ asset('/js/bootstrap.bundle.min.js') }}"></script>
 
 
-@livewireScripts
+{{-- @livewireScripts --}}
 <script src="{{ asset('/js/main.js') }}"></script>
 {{ $script ?? ''}}

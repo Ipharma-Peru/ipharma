@@ -5,6 +5,7 @@
     tabindex="-1"
     aria-labelledby="pagoLabel"
     aria-hidden="true"
+    ref="modalPago"
   >
     <div class="modal-dialog">
       <div class="modal-content">
@@ -19,7 +20,9 @@
         </div>
         <div class="modal-body">
           <div class="">
-            <h4>Pagar: <span class="badge bg-secondary">S/ {{ total }}</span></h4>
+            <h4>
+              Pagar: <span class="badge bg-secondary">S/ {{ total }}</span>
+            </h4>
           </div>
           <div class="mb-3">
             <label for="monto-pago" class="col-form-label"
@@ -34,7 +37,9 @@
             />
           </div>
           <div class="mb-3">
-            <h4>Vuelto: <span class="badge bg-success">S/ {{ restaMonto }}</span></h4>
+            <h4>
+              Vuelto: <span class="badge bg-success">S/ {{ restaMonto }}</span>
+            </h4>
           </div>
           <div class="mb-3 form-check">
             <input
@@ -89,35 +94,39 @@ export default {
   },
   methods: {
     calculateRest() {
-      
       this.restaMonto = (this.montoPago - this.total).toFixed(2);
     },
     procesarPago() {
       console.log(this.datos);
       axios
-        .post("/api/ventas/registrar", this.datos)
-        .then((response) => {
-          const toastParams = {
-            duration: 3000,
-            close: true,
-            gravity: "bottom",
-            position: "left",
-          };
-          if (response.data.status) {
-            Toastify({
-              text: "¡Guardado!",
-              ...toastParams,
-              style: {
-                background: "linear-gradient(to right, #00b09b, #96c93d)",
-              },
-            }).showToast();
-          } else {
-            Toastify({
-              text: response.data.message,
-              ...toastParams,
-              style: {
-                background: "linear-gradient(to right, #ff5733, #ff8f33)",
-                color: "#fff",
+      .post("/api/ventas/registrar", this.datos)
+      .then((response) => {
+        const toastParams = {
+          duration: 3000,
+          close: true,
+          gravity: "bottom",
+          position: "left",
+        };
+        if (response.data.status) {
+          
+          Toastify({
+            text: "¡Guardado!",
+            ...toastParams,
+            style: {
+              background: "linear-gradient(to right, #00b09b, #96c93d)",
+            },
+          }).showToast();
+          this.$emit("pagoRealizado");
+          const modal = document.getElementById("pagoPopup");
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+          modalInstance.hide();
+        } else {
+          Toastify({
+            text: response.data.message,
+            ...toastParams,
+            style: {
+              background: "linear-gradient(to right, #ff5733, #ff8f33)",
+              color: "#fff",
               },
             }).showToast();
           }
