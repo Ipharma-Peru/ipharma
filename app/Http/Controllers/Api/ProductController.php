@@ -146,11 +146,11 @@ class ProductController extends Controller
             $presentation->product_id = $productId;
             $presentation->save();
 
-            if ($idPrincipios !== null) {
+            if ($request->selectedPrincipios !== null) {
                 $idPrincipios = array_column($request->selectedPrincipios,'id');
                 $product->activeSubstances()->attach($idPrincipios);
             }
-            if ($idFarmacologicas !== null) {
+            if ($request->selectedactionPharma !== null) {
                 $idFarmacologicas = array_column($request->selectedactionPharma,'id');
                 $product->pharmaActions()->attach($idFarmacologicas);
             }
