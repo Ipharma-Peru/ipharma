@@ -15,7 +15,6 @@ class ActiveSubstanceController extends Controller
         try {
             $presentation = new ActiveSubstance();
             $presentation->nombre = strtoupper($request->nombre);
-            $presentation->deleted = false;
             $presentation->save();
 
             DB::commit();

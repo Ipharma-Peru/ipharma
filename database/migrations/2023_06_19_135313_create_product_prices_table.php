@@ -19,7 +19,6 @@ return new class extends Migration
             $table->decimal('precio_blister', 8, 2)->nullable();
             $table->decimal('precio_caja', 8, 2);
             $table->boolean('activo')->default(true);
-            $table->boolean('deleted')->default(false);
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });

@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('presentations', function (Blueprint $table) {
             $table->id();
             $table->string('presentacion', 50);
-            $table->boolean('deleted')->default(false);
             $table->timestamps();
         });
     }

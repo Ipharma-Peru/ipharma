@@ -15,7 +15,6 @@ class PresentationController extends Controller
         try {
             $presentation = new Presentation;
             $presentation->presentacion = strtoupper($request->presentacion);
-            $presentation->deleted = false;
             $presentation->save();
 
             DB::commit();

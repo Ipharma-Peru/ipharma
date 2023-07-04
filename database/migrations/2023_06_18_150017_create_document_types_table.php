@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('codigo', 5);
             $table->string('descripcion', 50);
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }
