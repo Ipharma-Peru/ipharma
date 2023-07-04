@@ -35,4 +35,22 @@ class InvoiceSeriesController extends Controller
         
         return $actual;
     }
+
+    public function getVoucherData(int $salesId)
+    {
+        return InvoiceSeries::join('invoice_types','invoice_types.id','invoice_series.invoice_type_id')
+            ->join('sales','sales.invoice_series_id','invoice_series.id')
+            ->join('currencies','currencies.id','sales.currency_id')
+            ->join('sale_statuses','sale_statuses.id','sales.sale_status_id')
+            ->select(
+                'invoice_types.codigo as tipo_documento',
+                'invoice_series.serie',
+                'sales.correlativo',
+                'sales.fecha_emision',
+                'currencies.codigo as moneda'
+            )
+            ->where('sales.id',$salesId)
+            ->where('sale_statuses.estado','REGISTRADO')
+            ->first();
+    }
 }

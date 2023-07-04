@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('codigo', 5);
             $table->string('descripcion', 20);
             $table->boolean('activo')->default(true);
-            $table->boolean('deleted')->default(false);
             $table->timestamps();
         });
     }

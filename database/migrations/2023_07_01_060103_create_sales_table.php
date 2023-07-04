@@ -17,13 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('correlativo');
             $table->date('fecha_emision');
-            $table->decimal('op_gravadas', 8, 2)->nullable();
-            $table->decimal('op_exoneradas', 8, 2)->nullable();
-            $table->decimal('op_inafectas', 8, 2)->nullable();
-            $table->decimal('total_igv', 6, 2)->nullable();
-            $table->decimal('total', 8, 2)->nullable();
             $table->bigInteger('user_id');
-            $table->boolean('deleted')->default(false);
             $table->foreignId('company_id')->constrained()->restrictOnDelete();
             $table->foreignId('currency_id')->constrained()->restrictOnDelete();
             $table->foreignId('tax_rate_id')->constrained()->restrictOnDelete();

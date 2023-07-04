@@ -16,12 +16,11 @@ return new class extends Migration
         Schema::create('invoice_statuses', function (Blueprint $table) {
             $table->id();
             $table->boolean('estado_facturacion');
-            $table->string('codigo_error', 10);
-            $table->text('mensaje_sunat');
-            $table->string('nombre_xml', 60);
-            $table->text('xml_base64');
-            $table->text('cdr_base64');
-            $table->boolean('deleted')->default(false);
+            $table->string('codigo_error', 10)->nullable();
+            $table->text('mensaje_sunat')->nullable();
+            $table->string('nombre_xml', 60)->nullable();
+            $table->text('xml_base64')->nullable();
+            $table->text('cdr_base64')->nullable();
             $table->foreignId('sale_id')->constrained()->restrictOnDelete();
             $table->timestamps();
         });
