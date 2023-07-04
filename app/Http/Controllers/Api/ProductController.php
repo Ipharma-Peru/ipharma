@@ -25,6 +25,7 @@ class ProductController extends Controller
         ->join('laboratories','laboratories.id','products.laboratory_id')
         ->leftjoin('inventories','inventories.product_id','products.id')
         ->join('lots','inventories.lot_id','lots.id')
+        ->join('affectation_types','affectation_types.id','products.affectation_type_id')
         ->select(
             'products.id as product_id',
             'products.codigo',
@@ -36,9 +37,11 @@ class ProductController extends Controller
             'product_prices.precio_blister',
             'product_prices.precio_caja',
             'laboratories.nombre_laboratorio',
+            'laboratories.codigo as codigo_laboratorio',
             'inventories.stock',
             'lots.numero_lote',
-            'lots.fecha_vencimiento'
+            'lots.fecha_vencimiento',
+            'affectation_types.nombre_afectacion as afectacion',
             // DB::raw('SUM(inventories.stock) as stock'),
             )
         ->where('products.descripcion','like', '%'. $search .'%')
@@ -114,7 +117,7 @@ class ProductController extends Controller
         try {
             $product = new Product;
             $product->codigo = $this->generateProductCode();
-            $product->descripcion = $request->description;
+            $product->descripcion = strtoupper($request->description);
             $product->activo = true;
             $product->fraccionable = $request->fraccionable;
             $product->deleted = false;
@@ -145,8 +148,12 @@ class ProductController extends Controller
 
             $idPrincipios = array_column($request->selectedPrincipios,'id');
             $idFarmacologicas = array_column($request->selectedactionPharma,'id');
-            $product->activeSubstances()->attach($idPrincipios);
-            $product->pharmaActions()->attach($idFarmacologicas);
+            if ($idPrincipios !== null) {
+                $product->activeSubstances()->attach($idPrincipios);
+            }
+            if ($idFarmacologicas !== null) {
+                $product->pharmaActions()->attach($idFarmacologicas);
+            }
 
             DB::commit();
             return ['status' => true];

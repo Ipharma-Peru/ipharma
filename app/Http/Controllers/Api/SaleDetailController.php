@@ -81,4 +81,38 @@ class SaleDetailController extends Controller
         $inventory = new InventoryController();
         return ($fraccion == true) ? $unidades : $inventory->calculateTotalUnitsByBoxes($idProduct, $unidades);
     }
+
+    /**
+     * Obtiene el detalle del documento para su envio
+     * a Sunat
+     */
+    public function getDocumentDetail(int $saleId)
+    {
+        return SaleDetail::join('sales','sale_details.sale_id','sales.id')
+                ->join('products','products.id','sale_details.product_id')
+                ->join('product_prices','product_prices.id','products.id')
+                ->join('price_types','price_types.id','products.price_type_id')
+                ->join('tax_rates','tax_rates.id','sales.tax_rate_id')
+                ->join('units','units.id','products.unit_id')
+                ->join('affectation_types','affectation_types.id','products.affectation_type_id')
+                ->select(
+                    'sale_details.id',
+                    'products.codigo as codigo_producto',
+                    'products.descripcion',
+                    'sale_details.cantidad',
+                    'sale_details.cantidad_is_fraccion as fraccion',
+                    'product_prices.precio_unidad',
+                    'product_prices.precio_caja',
+                    'price_types.codigo as tipo_precio',
+                    'tax_rates.valor_igv',
+                    'units.codigo as unidad_medida',
+                    'affectation_types.codigo',
+                    'affectation_types.codigo_afectacion',
+                    'affectation_types.tipo_afectacion',
+                    'affectation_types.nombre_afectacion'
+                )
+                ->where('sales.id',$saleId)
+                ->orderBy('sale_details.id','ASC')
+                ->get();
+    }
 }

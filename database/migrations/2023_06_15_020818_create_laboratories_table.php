@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('codigo', 30);
             $table->string('nombre_laboratorio', 250);
-            $table->boolean('deleted')->default(false);
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }

@@ -38,8 +38,9 @@ class VentaController extends Controller
         ->join('presentations','presentations.id','products.presentation_id')
         ->join('product_subclasses','products.product_subclass_id','product_subclasses.id')
         ->join('lots','inventories.lot_id','lots.id')
+        ->join('affectation_types','affectation_types.id','products.affectation_type_id')
         ->select(
-            'products.id',
+            'products.id as product_id',
             'products.codigo',
             'products.descripcion',
             'products.activo',
@@ -49,9 +50,11 @@ class VentaController extends Controller
             'product_prices.precio_blister',
             'product_prices.precio_caja',
             'laboratories.nombre_laboratorio',
+            'laboratories.codigo as codigo_laboratorio',
             'lots.numero_lote',
             'lots.fecha_vencimiento',
             'inventories.stock',
+            'affectation_types.nombre_afectacion as afectacion'
             // DB::raw('SUM(inventories.stock) as stock'),
         )
         ->where('product_subclasses.descripcion', $tipoProducto)
@@ -78,8 +81,9 @@ class VentaController extends Controller
         ->join('presentations','presentations.id','products.presentation_id')
         ->join('product_subclasses','products.product_subclass_id','product_subclasses.id')
         ->join('lots','inventories.lot_id','lots.id')
+        ->join('affectation_types','affectation_types.id','products.affectation_type_id')
         ->select(
-            'products.id',
+            'products.id as product_id',
             'products.codigo',
             'products.descripcion',
             'products.activo',
@@ -89,9 +93,11 @@ class VentaController extends Controller
             'product_prices.precio_blister',
             'product_prices.precio_caja',
             'laboratories.nombre_laboratorio',
+            'laboratories.codigo as codigo_laboratorio',
             'lots.numero_lote',
             'lots.fecha_vencimiento',
-            'inventories.stock'
+            'inventories.stock',
+            'affectation_types.nombre_afectacion as afectacion',
             // DB::raw('SUM(inventories.stock) as stock'),
         )
         ->where('products.product_subclass_id', $subClassId)
