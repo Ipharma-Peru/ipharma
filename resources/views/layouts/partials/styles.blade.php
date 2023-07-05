@@ -14,6 +14,6 @@
 <link rel="stylesheet" href="{{ mix('css/app-dark.css') }}"> --}}
 @vite(["resources/sass/bootstrap.scss", "resources/sass/themes/dark/app-dark.scss", "resources/sass/pages/auth.scss", "resources/sass/app.scss","resources/less/custom.less"])
 
-@livewireStyles
+{{-- @livewireStyles --}}
 
 {{ $style ?? '' }}

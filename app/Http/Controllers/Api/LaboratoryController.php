@@ -16,7 +16,6 @@ class LaboratoryController extends Controller
             $presentation = new Laboratory();
             $presentation->codigo = strtoupper($request->codigo);
             $presentation->nombre_laboratorio = strtoupper($request->nombre_laboratorio);
-            $presentation->deleted = false;
             $presentation->save();
 
             DB::commit();

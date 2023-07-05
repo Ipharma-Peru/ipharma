@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PresentationController;
 use App\Http\Controllers\Api\VentaController;
+use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ActiveSubstanceController;
 use App\Http\Controllers\Api\PharmaActionController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Api\LaboratoryController;
 use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\ClientController;
+use App\Http\Controllers\Api\InvoiceSeriesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,8 +29,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// TODO: Eliminar esto
 Route::controller(VentaController::class)->group(function() {
     Route::post('/productscode', 'getProductsByCode');
+});
+
+Route::controller(SaleController::class)->group(function() {
+    Route::post('/ventas/registrar', 'registrarVenta');
+});
+
+Route::controller(InvoiceSeriesController::class)->group(function() {
+    Route::get('/correlativo/consultar', 'getCorrelativeBySerie');
 });
 
 Route::controller(ProductController::class)->group(function() {
@@ -68,4 +79,8 @@ Route::controller(PurchaseController::class)->group(function() {
 Route::controller(ClientController::class)->group(function() {
     Route::post('/clientes/registrar', 'store');
     Route::post('/clientes/buscar', 'search');
+});
+
+Route::controller(InvoiceSeriesController::class)->group(function() {
+    Route::post('/documentos/correlativo', 'getCorrelativeBySerieFront');
 });

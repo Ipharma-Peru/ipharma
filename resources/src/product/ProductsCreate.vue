@@ -25,7 +25,7 @@
               </div>
               <div class="col-1">
                 <div class="form-group">
-                  <label for="clase" class="form-label">Clase</label>
+                  <label for="clase" class="form-label">Afectación</label>
                   <select
                     class="form-select"
                     id="clase"
@@ -90,6 +90,7 @@
                         class="form-check-input form-check-primary form-check-glow"
                         id="fraccionable"
                         v-model="formData.fraccionable"
+                         @change="clearFraccionableFields"
                       />
                       <label class="form-check-label" for="fraccionable"
                         >Fraccionable</label
@@ -100,53 +101,13 @@
               </div>
               <div class="col-2">
                 <div class="form-group">
-                  <label for="unidadCaja" class="form-label"
-                    >Unidad por Caja</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="unidadCaja"
-                    v-model="formData.unidadesByCaja"
-                  />
-                </div>
-              </div>
-              <div class="col-2">
-                <div class="form-group">
-                  <label for="unidadBlister" class="form-label"
-                    >Unidad por Blister</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="unidadBlister"
-                    v-model="formData.unidadesByBlister"
-                  />
-                </div>
-              </div>
-
-              <div class="col-2">
-                <div class="form-group">
                   <label for="pvpX" class="form-label">PVP X</label>
                   <input
                     type="number"
                     class="form-control"
                     id="pvpX"
                     v-model="formData.pvpx"
-                  />
-                </div>
-              </div>
-              <div class="col-2">
-                <div class="form-group">
-                  <label for="pvpBlister" class="form-label"
-                    >PVP X Blister</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="pvpBlister"
-                    v-model="formData.pvpBlister"
-                    disabled
+                    required
                   />
                 </div>
               </div>
@@ -160,6 +121,50 @@
                     class="form-control"
                     id="pvpFraccion"
                     v-model="formData.pvpFraccion"
+                    :disabled="!formData.fraccionable"
+                  />
+                </div>
+              </div>
+
+              <div class="col-2">
+                <div class="form-group">
+                  <label for="unidadCaja" class="form-label"
+                    >Unidad por Caja</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="unidadCaja"
+                    v-model="formData.unidadesByCaja"
+                    :disabled="!formData.fraccionable"
+                  />
+                </div>
+              </div>
+              <div class="col-2 d-none">
+                <div class="form-group">
+                  <label for="unidadBlister" class="form-label"
+                    >Unidad por Blister</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="unidadBlister"
+                    v-model="formData.unidadesByBlister"
+                  />
+                </div>
+              </div>
+
+              <div class="col-2 d-none">
+                <div class="form-group">
+                  <label for="pvpBlister" class="form-label"
+                    >PVP X Blister</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="pvpBlister"
+                    v-model="formData.pvpBlister"
+                    disabled
                   />
                 </div>
               </div>
@@ -186,7 +191,7 @@
                     </select>
                     <button
                       type="button"
-                      class="btn btn-primary"
+                      class="btn btn-primary d-none"
                       data-bs-toggle="modal"
                       data-bs-target="#presentation"
                     >
@@ -225,6 +230,7 @@
                   </div>
                 </fieldset>
               </div>
+
               <!-- Agrega el componente LaboratorioPopup en el mismo archivo -->
               <LaboratoryPopup @close="cerrarPopup" />
             </div>
@@ -353,13 +359,13 @@ export default {
         !selectedSubclase ||
         unidadesByCaja < 0 ||
         unidadesByBlister < 0 ||
-        pvpx < 0 ||
+        !pvpx ||
         pvpBlister < 0 ||
         pvpFraccion < 0 ||
         !selectedPresentacion ||
         !selectedLaboratorio ||
-        !selectedPrincipios ||
-        !selectedactionPharma ||
+        // !selectedPrincipios ||
+        // !selectedactionPharma ||
         !tipoAfectacion
       );
     },
@@ -378,22 +384,22 @@ export default {
         selectedClass: "",
         selectedSubclase: "",
         fraccionable: false,
-        unidadesByCaja: 0,
-        unidadesByBlister: 0,
-        pvpx: 0,
-        pvpFraccion: 0,
-        pvpBlister: 0,
+        unidadesByCaja: "",
+        unidadesByBlister: "",
+        pvpx: "",
+        pvpFraccion: "",
+        pvpBlister: "",
         selectedPresentacion: "",
         selectedLaboratorio: "",
         selectedPrincipios: "",
         selectedactionPharma: "",
-        tipoAfectacion: "",
+        tipoAfectacion: 1,
       },
       afectaciones: [
-          { id: 1, descripcion: "GRAVADAS" },
-          { id: 2, descripcion: "EXONERADAS" },
-          { id: 3, descripcion: "INAFECTAS" },
-        ],
+        { id: 1, descripcion: "GRAVADAS" },
+        { id: 2, descripcion: "EXONERADAS" },
+        { id: 3, descripcion: "INAFECTAS" },
+      ],
     };
   },
   mounted() {
@@ -465,7 +471,7 @@ export default {
               selectedLaboratorio: "",
               selectedPrincipios: "",
               selectedactionPharma: "",
-              tipoAfectacion:"",
+              tipoAfectacion: "",
             };
           }
         })
@@ -473,6 +479,12 @@ export default {
           // Lógica para manejar el error de la solicitud
         });
     },
+    clearFraccionableFields() {
+    if (!this.formData.fraccionable) {
+      this.formData.pvpFraccion = '';
+      this.formData.unidadesByCaja = '';
+    }
+  },
   },
 };
 </script>

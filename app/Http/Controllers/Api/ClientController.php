@@ -79,4 +79,22 @@ class ClientController extends Controller
             ];
         }
     }
+
+    public function searchById(mixed $clientId)
+    {
+        return NaturalPerson::join('people', 'people.id','natural_people.person_id')
+        ->join('clients','clients.person_id','people.id')
+        ->leftJoin('addresses','addresses.person_id', 'people.id')
+        ->select(
+            'clients.id',
+            'natural_people.numero_documento',
+            DB::raw("CONCAT(
+                    natural_people.nombres, ' ',
+                    natural_people.apellido_paterno, ' ',
+                    natural_people.apellido_materno) AS nombre"),
+            'addresses.direccion'
+            )
+        ->where('clients.id', $clientId)
+        ->first();
+    }
 }

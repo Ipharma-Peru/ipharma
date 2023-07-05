@@ -23,35 +23,52 @@ class ProductController extends Controller
         return Product::join('presentations', 'presentations.id','products.presentation_id')
         ->join('product_prices','product_prices.id','products.id')
         ->join('laboratories','laboratories.id','products.laboratory_id')
-        ->join('inventories','inventories.product_id','products.id')
+        ->leftjoin('inventories','inventories.product_id','products.id')
         ->join('lots','inventories.lot_id','lots.id')
+        ->join('affectation_types','affectation_types.id','products.affectation_type_id')
         ->select(
+            'products.id as product_id',
             'products.codigo',
             'products.descripcion',
             'products.activo',
+            'products.fraccionable',
             'presentations.presentacion',
             'product_prices.precio_unidad',
             'product_prices.precio_blister',
             'product_prices.precio_caja',
             'laboratories.nombre_laboratorio',
+            'laboratories.codigo as codigo_laboratorio',
             'inventories.stock',
-            'lots.numero_lote'
+            'lots.numero_lote',
+            'lots.fecha_vencimiento',
+            'affectation_types.nombre_afectacion as afectacion',
+            // DB::raw('SUM(inventories.stock) as stock'),
             )
         ->where('products.descripcion','like', '%'. $search .'%')
         ->where('products.deleted',0)
-        ->where('presentations.deleted',0)
-        ->where('product_prices.deleted',0)
+        // ->groupBy(
+        //     'products.codigo',
+        //     'products.descripcion',
+        //     'products.activo',
+        //     'presentations.presentacion',
+        //     'product_prices.precio_unidad',
+        //     'product_prices.precio_blister',
+        //     'product_prices.precio_caja',
+        //     'laboratories.nombre_laboratorio',
+        //     // 'inventories.stock',
+        //     // 'numero_lote'
+        //     )
         ->get();
     }
 
     public function getInitialData()
     {
         return [
-            'clases' => ProductClass::where('deleted', 0)->select('id','codigo','descripcion')->get(),
-            'laboratorios' => Laboratory::where('deleted', 0)->select('id','codigo','nombre_laboratorio')->get(),
-            'presentaciones' => Presentation::where('deleted', 0)->select('id','presentacion')->get(),
-            'principios' => ActiveSubstance::where('deleted', 0)->select('id','nombre')->get(),
-            'acciones' => PharmaAction::where('deleted', 0)->select('id','nombre')->get()
+            'clases' => ProductClass::select('id','codigo','descripcion')->get(),
+            'laboratorios' => Laboratory::select('id','codigo','nombre_laboratorio')->get(),
+            'presentaciones' => Presentation::select('id','presentacion')->get(),
+            'principios' => ActiveSubstance::select('id','nombre')->get(),
+            'acciones' => PharmaAction::select('id','nombre')->get()
         ];
     }
 
@@ -87,8 +104,6 @@ class ProductController extends Controller
             'laboratories.nombre_laboratorio'
             )
         ->where('products.deleted',0)
-        ->where('presentations.deleted',0)
-        ->where('product_prices.deleted',0)
         ->get();
     }
 
@@ -98,7 +113,7 @@ class ProductController extends Controller
         try {
             $product = new Product;
             $product->codigo = $this->generateProductCode();
-            $product->descripcion = $request->description;
+            $product->descripcion = strtoupper($request->description);
             $product->activo = true;
             $product->fraccionable = $request->fraccionable;
             $product->deleted = false;
@@ -116,21 +131,23 @@ class ProductController extends Controller
             $price->precio_blister = $request->pvpBlister;
             $price->precio_unidad = $request->pvpFraccion;
             $price->activo = true;
-            $price->deleted = false;
             $price->product_id = $productId;
             $price->save();
 
             $presentation = new PresentationDetail();
             $presentation->unidades_por_caja = $request->unidadesByCaja;
             $presentation->unidades_por_blister = $request->unidadesByBlister;
-            $presentation->deleted = false;
             $presentation->product_id = $productId;
             $presentation->save();
 
-            $idPrincipios = array_column($request->selectedPrincipios,'id');
-            $idFarmacologicas = array_column($request->selectedactionPharma,'id');
-            $product->activeSubstances()->attach($idPrincipios);
-            $product->pharmaActions()->attach($idFarmacologicas);
+            if ($request->selectedPrincipios !== null) {
+                $idPrincipios = array_column($request->selectedPrincipios,'id');
+                $product->activeSubstances()->attach($idPrincipios);
+            }
+            if ($request->selectedactionPharma !== null) {
+                $idFarmacologicas = array_column($request->selectedactionPharma,'id');
+                $product->pharmaActions()->attach($idFarmacologicas);
+            }
 
             DB::commit();
             return ['status' => true];
@@ -150,8 +167,8 @@ class ProductController extends Controller
 
     public function generateProductCode()
     {
-        $code = Product::where('deleted', 0)->select('codigo')->orderBy('codigo', 'DESC')->first();
-        $code = (int)$code->codigo + 1;
+        $code = Product::select('codigo')->orderBy('codigo', 'DESC')->first();
+        $code = ($code === null) ? 1000 : (int)$code->codigo + 1;
         $code = str_pad($code, 8, '0', STR_PAD_LEFT);
         return $code;
     }

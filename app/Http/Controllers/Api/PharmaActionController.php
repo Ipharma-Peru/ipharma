@@ -15,7 +15,6 @@ class PharmaActionController extends Controller
         try {
             $presentation = new PharmaAction();
             $presentation->nombre = strtoupper($request->nombre);
-            $presentation->deleted = false;
             $presentation->save();
 
             DB::commit();

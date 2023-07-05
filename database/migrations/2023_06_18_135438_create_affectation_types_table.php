@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('codigo_afectacion', 5);
             $table->string('tipo_afectacion', 10);
             $table->string('nombre_afectacion', 10);
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }
