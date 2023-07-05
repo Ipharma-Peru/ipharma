@@ -162,7 +162,7 @@
               </table>
             </div>
             <div
-              class="detail-sales d-flex flex-column justify-content-end align-items-end pt-3"
+              class="detail-sales d-flex flex-column justify-content-end align-items-end pt-4"
             >
               <div class="sub-total d-flex">
                 <label for="">Sub total</label>
@@ -177,15 +177,17 @@
                 <h5 class="ps-5">S/ {{ total }}</h5>
               </div>
             </div>
-            <button
-              class="btn btn-primary"
-              @click="sendData"
-              :disabled="disableVenderButton"
-              data-bs-toggle="modal"
-              data-bs-target="#pagoPopup"
-            >
-              Vender
-            </button>
+            <div class="text-end mt-4">
+              <button
+                class="btn btn-primary"
+                @click="sendData"
+                :disabled="disableVenderButton"
+                data-bs-toggle="modal"
+                data-bs-target="#pagoPopup"
+              >
+                Vender
+              </button>
+            </div>
           </div>
         </div>
       </div>
