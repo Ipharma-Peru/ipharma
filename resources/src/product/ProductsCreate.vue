@@ -103,11 +103,11 @@
                 <div class="form-group">
                   <label for="pvpX" class="form-label">PVP X</label>
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
                     id="pvpX"
                     v-model="formData.pvpx"
-                    required
+                    
                   />
                 </div>
               </div>
@@ -117,7 +117,7 @@
                     >PVP X Fracción</label
                   >
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
                     id="pvpFraccion"
                     v-model="formData.pvpFraccion"
