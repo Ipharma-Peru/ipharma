@@ -124,13 +124,13 @@ class NumerosEnLetras
                         break;
                     case 2:
                         if ($xcifra < 1) {
-                            $xcadena = "CERO " . strtoupper($moneda) . " con $xdecimales/100 " . strtoupper($centimos);  // borrar en caso no se desee decimales /100
+                            $xcadena = "CERO " . strtoupper($moneda) . " CON $xdecimales/100 " . strtoupper($centimos);  // borrar en caso no se desee decimales /100
                         }
                         if ($xcifra >= 1 && $xcifra < 2) {
-                            $xcadena = "UNO " . strtoupper($moneda) . " con $xdecimales/100 " . strtoupper($centimos);   // borrar en caso no se desee decimales /100
+                            $xcadena = "UNO " . strtoupper($moneda) . " CON $xdecimales/100 " . strtoupper($centimos);   // borrar en caso no se desee decimales /100
                         }
                         if ($xcifra >= 2) {
-                            $xcadena .= strtoupper($moneda) . " con $xdecimales/100 " . strtoupper($centimos);  // borrar en caso no se desee decimales /100
+                            $xcadena .= strtoupper($moneda) . " CON $xdecimales/100 " . strtoupper($centimos);  // borrar en caso no se desee decimales /100
                         }
                         break;
                 } // endswitch ($xz)

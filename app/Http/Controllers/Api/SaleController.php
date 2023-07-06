@@ -23,6 +23,8 @@ class SaleController extends Controller
         if ($store['status'] === true) {
             return $this->enviarBoleta($store['saleId'], $request->tipoDocumento, $request->idCliente);
         }
+
+        return $store;
     }
 
     public function store(Request $request)
@@ -80,11 +82,17 @@ class SaleController extends Controller
             $comprobante = $this->getComprobante($detalle, $saleId);
 
             $boletaFactura = new BoletaFactura();
-            $status = $boletaFactura->CrearXMLFactura($emisor, $cliente, $comprobante, $detalle);
+            $status = $boletaFactura->CrearXMLFactura($emisor, $cliente, $comprobante, $detalle, 'boleta/');
             $this->updateStatusSale($status, $saleId);
             return json_encode([
                 'status' => $status['estado'],
-                'mensaje' => 'Exitoso'
+                'mensaje' => 'Exitoso',
+                'ticket' => [
+                    'emisor' => $emisor,
+                    'cliente' => $cliente,
+                    'detalle' => $detalle,
+                    'comprobante' => $comprobante
+                ]
             ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
@@ -182,10 +190,10 @@ class SaleController extends Controller
                 'valor_unitario'    => $valorUnitario,
                 'precio_unitario'   => (int)$precioUnitario,
                 'tipo_precio'       => $item->tipo_precio, //Este precio incluye IGV Catálogo No. 16: Códigos – Tipo de precio de venta unitario
-                'igv'               => $igv * $precioUnitario * $item->cantidad,
+                'igv'               => bcmul($igv, bcmul($precioUnitario, $item->cantidad, 2), 2),
                 'porcentaje_igv'    => (int)($item->valor_igv * 100), //0 a 100
-                'valor_total'       => $valorUnitario * $item->cantidad,
-                'importe_total'     => $precioUnitario * $item->cantidad,
+                'valor_total'       => bcmul($valorUnitario, $item->cantidad, 2),
+                'importe_total'     => bcmul($precioUnitario, $item->cantidad, 2),
                 'unidad'            => $item->unidad_medida, //Unidad de medida
                 'codigo_afectacion_alt' => $item->codigo, //Catálogo No. 07: Códigos de tipo de afectación del IGV
                 'codigo_afectacion' => $item->codigo_afectacion, //Catálogo No. 05: Códigos de tipos de tributos
@@ -239,6 +247,30 @@ class SaleController extends Controller
             'clave_sol'     => 'MODDATOS'//$data->clave_secundaria, //clave del usuario secundario de emisión
         );
 
+    }
+
+    public function getDatosVentaById(Request $request)
+    {
+        $saleId = $request->idventa;
+        $detalles = $this->getDataItems($saleId);
+
+        $comprobante = $this->getComprobante($detalles, $saleId);
+
+        return array_merge($comprobante, ['detalles' => $detalles]);
+    }
+
+    public function getDatosVentaBySerie(Request $request)
+    {
+        $serie = $request->serie;
+        $correlativo = $request->correlativo;
+
+        $invoiceSerie = new InvoiceSeriesController();
+        $idVenta = $invoiceSerie->getIdBoleta($serie, $correlativo);
+
+        $detalles = $this->getDataItems($idVenta);
+        $comprobante = $this->getComprobante($detalles, $idVenta);
+
+        return array_merge($comprobante, ['detalles' => $detalles]);
     }
 
 }
