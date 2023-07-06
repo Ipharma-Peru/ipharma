@@ -9,7 +9,7 @@ use App\NumerosEnLetras;
 
 class BoletaFactura extends Controller
 {
-    public function CrearXMLFactura($emisor, $cliente, $comprobante, $detalle)
+    public function CrearXMLFactura($emisor, $cliente, $comprobante, $detalle, $rutaDocumento)
     {
         //crear el texto XML de la factura electronica
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
@@ -197,14 +197,14 @@ class BoletaFactura extends Controller
         // Guarda el XML en un archivo
         $nombreDocumento = $emisor['ruc'] . '-' . $comprobante['tipodoc'] . '-' . $comprobante['serie'] . '-' . $comprobante['correlativo'];
         // $ruta = storage_path('app/public/fe/xml/creados/venta/');
-        $ruta = 'app/public/fe/xml/creados/boleta/';
+        $ruta = 'app/public/fe/xml/creados/' . $rutaDocumento;
         $nombrexml= $nombreDocumento . '.XML';
         // $rutaArchivo = storage_path('app/public/fe/xml/creados/venta/productos.xml');
         $rutaArchivo = storage_path($ruta . $nombrexml);
         file_put_contents($rutaArchivo, $xml);
 
         $facturacion = new FacturacionController();
-        return $facturacion->enviarDocumento($emisor, $nombreDocumento, $ruta, 'boleta/');
+        return $facturacion->enviarDocumento($emisor, $nombreDocumento, $ruta, $rutaDocumento);
 
 
     }
