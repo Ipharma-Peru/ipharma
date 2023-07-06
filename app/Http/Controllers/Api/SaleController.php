@@ -23,6 +23,8 @@ class SaleController extends Controller
         if ($store['status'] === true) {
             return $this->enviarBoleta($store['saleId'], $request->tipoDocumento, $request->idCliente);
         }
+
+        return $store;
     }
 
     public function store(Request $request)
@@ -245,6 +247,30 @@ class SaleController extends Controller
             'clave_sol'     => 'MODDATOS'//$data->clave_secundaria, //clave del usuario secundario de emisión
         );
 
+    }
+
+    public function getDatosVentaById(Request $request)
+    {
+        $saleId = $request->idventa;
+        $detalles = $this->getDataItems($saleId);
+
+        $comprobante = $this->getComprobante($detalles, $saleId);
+
+        return array_merge($comprobante, ['detalles' => $detalles]);
+    }
+
+    public function getDatosVentaBySerie(Request $request)
+    {
+        $serie = $request->serie;
+        $correlativo = $request->correlativo;
+
+        $invoiceSerie = new InvoiceSeriesController();
+        $idVenta = $invoiceSerie->getIdBoleta($serie, $correlativo);
+
+        $detalles = $this->getDataItems($idVenta);
+        $comprobante = $this->getComprobante($detalles, $idVenta);
+
+        return array_merge($comprobante, ['detalles' => $detalles]);
     }
 
 }

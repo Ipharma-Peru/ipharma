@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\InvoiceSeriesController;
+use App\Http\Controllers\Api\NotaCreditoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,8 @@ Route::controller(VentaController::class)->group(function() {
 
 Route::controller(SaleController::class)->group(function() {
     Route::post('/ventas/registrar', 'registrarVenta');
+    Route::post('/ventas/obtenerbyid', 'getDatosVentaById');
+    Route::post('/ventas/obtenerbyserie', 'getDatosVentaBySerie');
 });
 
 Route::controller(InvoiceSeriesController::class)->group(function() {
@@ -83,4 +86,8 @@ Route::controller(ClientController::class)->group(function() {
 
 Route::controller(InvoiceSeriesController::class)->group(function() {
     Route::post('/documentos/correlativo', 'getCorrelativeBySerieFront');
+});
+
+Route::controller(NotaCreditoController::class)->group(function() {
+    Route::post('/notacredito/emitir', 'emitirNotaCredito');
 });

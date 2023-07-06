@@ -62,4 +62,20 @@ class InvoiceSeriesController extends Controller
             ->where('sale_statuses.estado','REGISTRADO')
             ->first();
     }
+
+    public function getIdBoleta(string $serie, int $correlativo)
+    {
+        return InvoiceSeries::join('sales','sales.invoice_series_id','invoice_series.id')
+        ->join('sale_statuses','sale_statuses.id','sales.sale_status_id')
+        ->join('invoice_statuses','invoice_statuses.sale_id','sales.id')
+        ->select(
+            'sales.id as saleId'
+        )
+        ->where('sales.correlativo',$correlativo)
+        ->where('invoice_series.serie',$serie)
+        ->where('sale_statuses.estado','REGISTRADO')
+        ->where('invoice_statuses.estado_facturacion',1)
+        ->pluck('saleId')
+        ->first();
+    }
 }
