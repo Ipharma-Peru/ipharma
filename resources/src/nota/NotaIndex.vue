@@ -5,6 +5,29 @@
         <div class="card">
           <div class="card-body">
             <div class="row">
+              <div class="col-4"></div>
+              <div class="col-4">
+                <div class="mb-3">
+                  <label for="serieNota" class="form-label"
+                    >Tipo de Documento</label
+                  >
+                  <select
+                    class="form-select"
+                    id="serieNota"
+                    v-model="serie.selected"
+                  >
+                    <option
+                      v-for="doc in serie.document"
+                      :key="doc.id"
+                      :value="doc.id"
+                    >
+                      {{ doc.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-3">
                 <div class="mb-3">
                   <label for="tipoDocumento" class="form-label"
@@ -90,7 +113,12 @@
                   <label for="fechaEmision" class="form-label"
                     >Fecha de Emisión</label
                   >
-                  <input type="date" class="form-control" id="fechaEmision" />
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="fechaEmision"
+                    v-model="fecha_emision"
+                  />
                 </div>
               </div>
               <div class="col-4">
@@ -186,7 +214,8 @@
               </tbody>
             </table>
             <div class="text-end mt-4">
-              <button class="btn btn-primary">Enviar nota</button>
+                    
+              <button class="btn btn-primary" @click="sendNota">Enviar nota</button>
             </div>
           </div>
         </div>
@@ -217,7 +246,7 @@ export default {
         document: [{ id: 1, name: "Boleta" }],
       },
       motivo: {
-        selected: 0,
+        selected: "01",
         document: [{ id: "01", name: "Anulación de la Operación" }],
       },
       boleta: {
@@ -225,6 +254,14 @@ export default {
         correlativo: "",
       },
       venta: [],
+      serie: {
+        selected: "BC01",
+        document: [
+          { id: "BP01", name: "BP01" },
+          { id: "BCP1", name: "BCP1" },
+        ],
+      },
+      fecha_emision: "",
     };
   },
   methods: {
@@ -277,6 +314,35 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.venta = response.data;
+          this.idVenta = response.data.idVenta;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    sendNota() {
+      const idBuscado = this.motivo.selected;
+      const motivoSeleccionado = this.motivo.document.find(
+        (item) => item.id === idBuscado
+      );
+      const descripcionMotivo = motivoSeleccionado
+        ? motivoSeleccionado.name
+        : "";
+      axios
+        .post("/api/notacredito/emitir", {
+          serie: this.serie.selected,
+          fecha_emision: this.fecha_emision,
+          idVenta: this.idVenta,
+          tipoDocumentoCliente: this.cliente.selectedDocument,
+          idCliente: this.cliente.idCliente,
+          tipodoc_ref: "03",
+          serie_ref: this.boleta.serie,
+          correlativo_ref: this.boleta.correlativo,
+          cod_motivo: this.motivo.selected,
+          descripcion: descripcionMotivo,
+        })
+        .then((response) => {
+          console.log(response)
         })
         .catch((error) => {
           console.error(error);
