@@ -91,7 +91,8 @@ class SaleController extends Controller
                     'emisor' => $emisor,
                     'cliente' => $cliente,
                     'detalle' => $detalle,
-                    'comprobante' => $comprobante
+                    'comprobante' => $comprobante,
+                    'idVenta' => $saleId
                 ]
             ]);
         } catch (\Exception $e) {
