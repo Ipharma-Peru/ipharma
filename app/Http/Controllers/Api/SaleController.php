@@ -207,9 +207,9 @@ class SaleController extends Controller
 
     public function getDataClient(int $tipoDocumento, mixed $idCliente)
     {
-        if ($tipoDocumento == 1) {
+        if ($tipoDocumento == 0) {
             return array(
-                'tipodoc'       => '1', //6: RUC, 1: DNI
+                'tipodoc'       => '0', //6: RUC, 1: DNI
                 'ruc'           => '00000000',
                 'razon_social'  => 'CLIENTE VARIOS',
                 'direccion'     => '',
