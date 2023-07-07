@@ -150,7 +150,7 @@
                       </td>
                       <td>
                         <input
-                          type="number"
+                          type="text"
                           class="form-control"
                           v-model="item.precio"
                         />

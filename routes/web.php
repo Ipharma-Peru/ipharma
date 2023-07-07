@@ -33,9 +33,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
     //     })->name('accordion');
     // });
     Route::group(['prefix' => 'caja', 'as' => 'caja.'], function() {
-        Route::get('/apertura', function () {
-            return view('admin.component.alert');
-        })->name('apertura');
+        Route::get('/nota-credito', function () {
+            return view('admin.caja.nota');
+        })->name('nota');
         Route::get('/ventas', function () {
             return view('admin.caja.ventas');
         })->name('ventas');

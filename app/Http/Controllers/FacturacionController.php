@@ -125,6 +125,7 @@ class FacturacionController extends Controller
             else {
                 $estadofe = '2';
                 $codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                $codigo = explode('.', $codigo)[1];
                 $mensaje = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
                 //LOG DE TRAX ERRORES DB
                 $data = [

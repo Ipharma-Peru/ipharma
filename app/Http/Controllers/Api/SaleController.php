@@ -91,7 +91,7 @@ class SaleController extends Controller
                     'emisor' => $emisor,
                     'cliente' => $cliente,
                     'detalle' => $detalle,
-                    'comprobante' => $comprobante
+                    'comprobante' => $comprobante,
                 ]
             ]);
         } catch (\Exception $e) {
@@ -267,8 +267,16 @@ class SaleController extends Controller
         $invoiceSerie = new InvoiceSeriesController();
         $idVenta = $invoiceSerie->getIdBoleta($serie, $correlativo);
 
+        if ($idVenta === null) {
+            return [
+                'success' => false,
+                'mensaje' => 'No existe un documento con la serie y numero ingresado'
+            ];
+        }
+
         $detalles = $this->getDataItems($idVenta);
         $comprobante = $this->getComprobante($detalles, $idVenta);
+        $comprobante['idVenta'] = $idVenta;
 
         return array_merge($comprobante, ['detalles' => $detalles]);
     }
