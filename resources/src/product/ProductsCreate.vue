@@ -160,7 +160,7 @@
                     >PVP X Blister</label
                   >
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
                     id="pvpBlister"
                     v-model="formData.pvpBlister"

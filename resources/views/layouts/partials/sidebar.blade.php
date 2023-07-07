@@ -9,7 +9,7 @@
         <x-maz-sidebar-sub-item name="Compras" :link="route('inventario.shopping')"></x-maz-sidebar-sub-item>
     </x-maz-sidebar-item>
     <x-maz-sidebar-item name="Caja" icon="bi bi-cart4">
-        <x-maz-sidebar-sub-item name="ape   rtura" :link="route('caja.apertura')"></x-maz-sidebar-sub-item>
+        <x-maz-sidebar-sub-item name="Nota de Crédito" :link="route('caja.nota')"></x-maz-sidebar-sub-item>
         <x-maz-sidebar-sub-item name="ventas" :link="route('caja.ventas')"></x-maz-sidebar-sub-item>
     </x-maz-sidebar-item>
     {{-- <x-maz-sidebar-item name="Component" icon="bi bi-stack">
