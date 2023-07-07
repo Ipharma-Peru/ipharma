@@ -92,7 +92,6 @@ class SaleController extends Controller
                     'cliente' => $cliente,
                     'detalle' => $detalle,
                     'comprobante' => $comprobante,
-                    'idVenta' => $saleId
                 ]
             ]);
         } catch (\Exception $e) {
@@ -277,6 +276,7 @@ class SaleController extends Controller
 
         $detalles = $this->getDataItems($idVenta);
         $comprobante = $this->getComprobante($detalles, $idVenta);
+        $comprobante['idVenta'] = $idVenta;
 
         return array_merge($comprobante, ['detalles' => $detalles]);
     }
