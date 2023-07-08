@@ -12,6 +12,7 @@ use App\Models\InvoiceStatus;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\CompanyController;
 use App\NumerosEnLetras;
+use App\Http\Controllers\FacturacionController;
 use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
@@ -21,7 +22,7 @@ class SaleController extends Controller
         $store = $this->store($request);
 
         if ($store['status'] === true) {
-            return $this->enviarBoleta($store['saleId'], $request->tipoDocumento, $request->idCliente);
+            return $this->prepararEnvioDocumento($store['saleId'], $request->tipoDocumento, $request->idCliente);
         }
 
         return $store;
@@ -69,7 +70,7 @@ class SaleController extends Controller
 
     }
 
-    public function enviarBoleta(int $saleId, int $tipoDocumento, mixed $clientId)
+    public function prepararEnvioDocumento(int $saleId, int $tipoDocumento, mixed $clientId)
     {
         try {
 
@@ -104,6 +105,11 @@ class SaleController extends Controller
                 'code' => $errorCode
             ]);
         }
+    }
+
+    public function enviarFactura(array $emisor)
+    {
+
     }
 
     public function updateStatusSale(array $status, int $saleId)
@@ -181,19 +187,19 @@ class SaleController extends Controller
 
             $precioUnitario = $item->fraccion == true ? $item->precio_unidad : $item->precio_caja;
             $igv = $item->codigo == 10 ? $item->valor_igv : 0;
-            $valorUnitario = $precioUnitario - ($precioUnitario * $igv);
+            $valorUnitario = $precioUnitario / ($igv + 1);
             $detalle = array(
                 'item'              => ++$i,
                 'codigo'            => $item->codigo_producto, //codigo del producto del sistema
                 'descripcion'       => $item->descripcion,
                 'cantidad'          => $item->cantidad,
-                'valor_unitario'    => $valorUnitario,
-                'precio_unitario'   => (int)$precioUnitario,
-                'tipo_precio'       => $item->tipo_precio, //Este precio incluye IGV Catálogo No. 16: Códigos – Tipo de precio de venta unitario
-                'igv'               => bcmul($igv, bcmul($precioUnitario, $item->cantidad, 2), 2),
-                'porcentaje_igv'    => (int)($item->valor_igv * 100), //0 a 100
-                'valor_total'       => bcmul($valorUnitario, $item->cantidad, 2),
-                'importe_total'     => bcmul($precioUnitario, $item->cantidad, 2),
+                'valor_unitario'    => round($valorUnitario, 2),
+                'precio_unitario'   => round($precioUnitario, 2),
+                'tipo_precio'       => round($item->tipo_precio, 2), //Este precio incluye IGV Catálogo No. 16: Códigos – Tipo de precio de venta unitario
+                'igv'               => round($igv * $valorUnitario * $item->cantidad, 2),
+                'porcentaje_igv'    => round($item->valor_igv, 2), //0 a 100
+                'valor_total'       => round($valorUnitario * $item->cantidad, 2),
+                'importe_total'     => round($precioUnitario * $item->cantidad, 2),
                 'unidad'            => $item->unidad_medida, //Unidad de medida
                 'codigo_afectacion_alt' => $item->codigo, //Catálogo No. 07: Códigos de tipo de afectación del IGV
                 'codigo_afectacion' => $item->codigo_afectacion, //Catálogo No. 05: Códigos de tipos de tributos
