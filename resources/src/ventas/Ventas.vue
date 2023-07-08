@@ -51,14 +51,14 @@
                     v-model="cliente.dni"
                     @keydown.enter="fetchClienteData"
                     @input="handleDNIInput"
-                    :disabled="cliente.selectedDocument === 1"
+                    :disabled="cliente.selectedDocument === 0"
                   />
                   <button
                     type="button"
                     class="btn btn-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#clientePopup"
-                    :disabled="cliente.selectedDocument === 1"
+                    :disabled="cliente.selectedDocument === 0"
                   >
                     +
                   </button>
@@ -383,10 +383,10 @@ export default {
       generico: [],
       selectedProducts: [],
       cliente: {
-        selectedDocument: 1,
+        selectedDocument: 0,
         document: [
-          { id: 2, name: "DNI" },
-          { id: 1, name: "Sin documento" },
+          { id: 1, name: "DNI" },
+          { id: 0, name: "Sin documento" },
         ],
         idCliente: "",
         dni: "",
@@ -399,7 +399,7 @@ export default {
   },
   watch: {
     "cliente.selectedDocument": function (newVal) {
-      if (newVal === 1) {
+      if (newVal === 0) {
         this.cliente.dni = "";
         this.cliente.idCliente = "";
         this.cliente.razonSocial = "";
@@ -413,7 +413,7 @@ export default {
   },
   computed: {
     disableVenderButton() {
-      if (this.cliente.selectedDocument === 1) {
+      if (this.cliente.selectedDocument === 0) {
         return (
           this.selectedProducts.length === 0 ||
           this.selectedProducts.some((product) => product.quantity <= 0)
@@ -619,7 +619,7 @@ export default {
       this.selectedProducts = [];
       this.clearRazonSocialAndDireccion();
       this.cliente.dni = "";
-      this.cliente.selectedDocument = 1;
+      this.cliente.selectedDocument = 0;
       this.searchTerm = "";
       this.marca = [];
       this.generico = [];
