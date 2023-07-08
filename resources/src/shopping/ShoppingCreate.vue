@@ -10,7 +10,7 @@
         </div>
 
         <div class="card-body">
-          <form @submit.prevent="addData">
+          <!-- <form @submit.prevent="addData"> -->
             <div class="row">
               <div class="col-md-7">
                 <label for="proveedor" class="form-label">Proveedor</label>
@@ -78,7 +78,6 @@
               </div>
             </div>
             <ProveedorPopup />
-            <div class="row"></div>
             <div class="row">
               <div class="container">
                 <table class="table">
@@ -175,6 +174,7 @@
 
                 <button
                   class="btn btn-primary"
+                  @click="addData"
                   :disabled="!areAllFieldsFilled"
                   type="submit"
                 >
@@ -182,7 +182,7 @@
                 </button>
               </div>
             </div>
-          </form>
+          <!-- </form> -->
         </div>
       </div>
     </div>
@@ -191,8 +191,6 @@
 <script>
 import ProveedorPopup from "./popup/ProveedorPopup.vue";
 import axios from "axios";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
 import Swal from "sweetalert2";
 
 export default {
@@ -383,7 +381,8 @@ function removeAccents(text) {
   width: 100%;
 }
 .autocomplete-list li:hover {
-  background-color: #435ebe34;
+  background-color: #435ebe;
+  color: #fff;
   cursor: pointer;
 }
 </style>
