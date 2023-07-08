@@ -46,6 +46,7 @@ class ProductController extends Controller
             )
         ->where('products.descripcion','like', '%'. $search .'%')
         ->where('products.deleted',0)
+        ->where('inventories.deleted',0)
         // ->groupBy(
         //     'products.codigo',
         //     'products.descripcion',
