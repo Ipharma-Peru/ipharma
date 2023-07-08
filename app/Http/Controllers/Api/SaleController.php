@@ -107,9 +107,26 @@ class SaleController extends Controller
         }
     }
 
-    public function enviarFactura(array $emisor)
+    public function listarVentas(Request $request)
     {
 
+        return Sale::select(
+                    'sales.id',
+                    'sales.fecha_emision',
+                    'invoice_series.serie',
+                    'sales.correlativo',
+                    'invoice_statuses.estado_facturacion',
+                    DB::raw('(SELECT SUM(cantidad * precio_unitario)
+                        FROM sale_details AS sale WHERE sale.sale_id = sales.id
+                        GROUP BY sale_id) AS total')
+        )
+        ->join('sale_details', 'sale_details.sale_id', '=', 'sales.id')
+        ->join('invoice_series', 'invoice_series.id', '=', 'sales.invoice_series_id')
+        ->join('invoice_types', 'invoice_types.id', '=', 'invoice_series.invoice_type_id')
+        ->leftJoin('invoice_statuses', 'invoice_statuses.sale_id', '=', 'sales.id')
+        ->whereBetween('sales.fecha_emision', [$request->fecha_inicio, $request->fecha_fin])
+        ->distinct()
+        ->get();
     }
 
     public function updateStatusSale(array $status, int $saleId)
@@ -131,7 +148,7 @@ class SaleController extends Controller
 
         return array(
             'tipodoc'       => $datosVoucher->tipo_documento, //FACTURA: 01, BOLETA:03, NOTA CREDITO:07, ND: 08
-            'serie'         => $datosVoucher->serie, //F:FACTURA, B:BOLETA
+            'serie'         => $datosVoucher->serie,// 'B0P1', //F:FACTURA, B:BOLETA
             'correlativo'   => $datosVoucher->correlativo,
             'fecha_emision' => $datosVoucher->fecha_emision,
             'moneda'        => $datosVoucher->moneda, //PEN: SOLES, USD: DOLARES
@@ -189,15 +206,15 @@ class SaleController extends Controller
             $igv = $item->codigo == 10 ? $item->valor_igv : 0;
             $valorUnitario = $precioUnitario / ($igv + 1);
             $detalle = array(
-                'item'              => ++$i,
+                'item'              => $i + 1,
                 'codigo'            => $item->codigo_producto, //codigo del producto del sistema
                 'descripcion'       => $item->descripcion,
                 'cantidad'          => $item->cantidad,
                 'valor_unitario'    => round($valorUnitario, 2),
                 'precio_unitario'   => round($precioUnitario, 2),
-                'tipo_precio'       => round($item->tipo_precio, 2), //Este precio incluye IGV Catálogo No. 16: Códigos – Tipo de precio de venta unitario
+                'tipo_precio'       => $item->tipo_precio, //Este precio incluye IGV Catálogo No. 16: Códigos – Tipo de precio de venta unitario
                 'igv'               => round($igv * $valorUnitario * $item->cantidad, 2),
-                'porcentaje_igv'    => round($item->valor_igv, 2), //0 a 100
+                'porcentaje_igv'    => round($item->valor_igv * 100), //0 a 100
                 'valor_total'       => round($valorUnitario * $item->cantidad, 2),
                 'importe_total'     => round($precioUnitario * $item->cantidad, 2),
                 'unidad'            => $item->unidad_medida, //Unidad de medida
@@ -249,8 +266,8 @@ class SaleController extends Controller
             'provincia'     => $data->provincia,
             'distrito'      => $data->distrito,
             'ubigeo'        => $data->ubigeo,
-            'usuario_sol'   => 'MODDATOS',//$data->usuario_secundario, //Es el usuario secundario de emision electronica
-            'clave_sol'     => 'MODDATOS'//$data->clave_secundaria, //clave del usuario secundario de emisión
+            'usuario_sol'   => $data->usuario_secundario, //'MODDATOS'//Es el usuario secundario de emision electronica
+            'clave_sol'     => $data->clave_secundaria, //'MODDATOS'//clave del usuario secundario de emisión
         );
 
     }
