@@ -39,6 +39,7 @@ Route::controller(SaleController::class)->group(function() {
     Route::post('/ventas/registrar', 'registrarVenta');
     Route::post('/ventas/obtenerbyid', 'getDatosVentaById');
     Route::post('/ventas/obtenerbyserie', 'getDatosVentaBySerie');
+    Route::post('/ventas/listar', 'listarVentas');
 });
 
 Route::controller(InvoiceSeriesController::class)->group(function() {
