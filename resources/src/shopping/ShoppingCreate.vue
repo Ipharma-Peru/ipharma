@@ -193,6 +193,7 @@ import ProveedorPopup from "./popup/ProveedorPopup.vue";
 import axios from "axios";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+import Swal from "sweetalert2";
 
 export default {
   components: {
@@ -248,7 +249,7 @@ export default {
       const formDataFieldsFilled = Object.values(this.formData).every(
         (value) => value !== ""
       );
-      console.log(formDataFieldsFilled)
+      console.log(formDataFieldsFilled);
 
       return itemsFieldsFilled && formDataFieldsFilled;
     },
@@ -274,26 +275,17 @@ export default {
         })),
         idProveedor: this.formData.proveedorId,
         numeroDocumento: this.formData.factura,
-        fechaCompra:this.formData.fechaFactura
+        fechaCompra: this.formData.fechaFactura,
       };
       axios
         .post("/api/compras/registrar", datos)
         .then((response) => {
           if (response.data.status) {
-            Toastify({
-              text: "¡Guardado!",
-              duration: 3000,
-              close: true,
-              gravity: "bottom", // `top` or `bottom`
-              position: "left", // `left`, `center` or `right`
-              style: {
-                background: "linear-gradient(to right, #00b09b, #96c93d)",
-              },
-            }).showToast();
+            this.clearFormData()
+            Swal.fire("Registrado!", "Se ingreso correctamente", "success");
           }
         })
         .catch((error) => {
-          // Ocurrió un error al realizar la solicitud POST, puedes manejar el error aquí
           console.error(error);
         });
     },
@@ -366,6 +358,13 @@ export default {
       this.formData.proveedores = suggestion.razon_social;
       this.formData.proveedorId = suggestion.id;
       this.showSuggestionList = false;
+    },
+    clearFormData() {
+      this.formData.proveedorId = "";
+      this.formData.factura = "";
+      this.formData.fechaFactura = "";
+      this.formData.proveedores = "";
+      this.items = [];
     },
   },
 };
