@@ -150,7 +150,10 @@ class SaleController extends Controller
         ->leftJoin('invoice_statuses', 'invoice_statuses.sale_id', '=', 'sales.id')
         ->leftJoin('sale_statuses', 'sale_statuses.id', 'sales.sale_status_id')
         ->where('sales.fecha_emision', $request->fecha)
-        ->where('invoice_statuses.estado_facturacion', '!=', 1)
+        ->where(function ($query) {
+            $query->where('invoice_statuses.estado_facturacion', null)
+                  ->orWhereIn('invoice_statuses.estado_facturacion', [2, 3]);
+        })
         ->where('sale_statuses.estado', 'REGISTRADO')
         ->distinct()
         ->get();
