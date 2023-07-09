@@ -116,6 +116,7 @@ class SaleController extends Controller
                     'invoice_series.serie',
                     'sales.correlativo',
                     'invoice_statuses.estado_facturacion',
+                    'sales.client_id',
                     DB::raw('(SELECT SUM(cantidad * precio_unitario)
                         FROM sale_details AS sale WHERE sale.sale_id = sales.id
                         GROUP BY sale_id) AS total')
@@ -125,6 +126,32 @@ class SaleController extends Controller
         ->join('invoice_types', 'invoice_types.id', '=', 'invoice_series.invoice_type_id')
         ->leftJoin('invoice_statuses', 'invoice_statuses.sale_id', '=', 'sales.id')
         ->whereBetween('sales.fecha_emision', [$request->fecha_inicio, $request->fecha_fin])
+        ->distinct()
+        ->get();
+    }
+
+    public function listarVentasResumen(Request $request)
+    {
+
+        return Sale::select(
+                    'sales.id',
+                    'sales.fecha_emision',
+                    'invoice_series.serie',
+                    'sales.correlativo',
+                    'invoice_statuses.estado_facturacion',
+                    'sales.client_id',
+                    DB::raw('(SELECT SUM(cantidad * precio_unitario)
+                        FROM sale_details AS sale WHERE sale.sale_id = sales.id
+                        GROUP BY sale_id) AS total')
+        )
+        ->join('sale_details', 'sale_details.sale_id', '=', 'sales.id')
+        ->join('invoice_series', 'invoice_series.id', '=', 'sales.invoice_series_id')
+        ->join('invoice_types', 'invoice_types.id', '=', 'invoice_series.invoice_type_id')
+        ->leftJoin('invoice_statuses', 'invoice_statuses.sale_id', '=', 'sales.id')
+        ->leftJoin('sale_statuses', 'sale_statuses.id', 'sales.sale_status_id')
+        ->where('sales.fecha_emision', $request->fecha)
+        ->where('invoice_statuses.estado_facturacion', '!=', 1)
+        ->where('sale_statuses.estado', 'REGISTRADO')
         ->distinct()
         ->get();
     }
@@ -148,7 +175,7 @@ class SaleController extends Controller
 
         return array(
             'tipodoc'       => $datosVoucher->tipo_documento, //FACTURA: 01, BOLETA:03, NOTA CREDITO:07, ND: 08
-            'serie'         => $datosVoucher->serie,// 'B0P1', //F:FACTURA, B:BOLETA
+            'serie'         => $datosVoucher->serie,// //'B0P1', //F:FACTURA, B:BOLETA
             'correlativo'   => $datosVoucher->correlativo,
             'fecha_emision' => $datosVoucher->fecha_emision,
             'moneda'        => $datosVoucher->moneda, //PEN: SOLES, USD: DOLARES
@@ -230,7 +257,7 @@ class SaleController extends Controller
 
     public function getDataClient(int $tipoDocumento, mixed $idCliente)
     {
-        if ($tipoDocumento == 0) {
+        if ($tipoDocumento == 0 || $idCliente == null) {
             return array(
                 'tipodoc'       => '0', //6: RUC, 1: DNI
                 'ruc'           => '00000000',
