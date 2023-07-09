@@ -45,8 +45,8 @@ class FacturacionController extends Controller
         
         
         //ENVIAR EL ZIP A LOS WS DE SUNAT - INICIO
-        $ws = 'https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService'; //ruta del servicio web de pruebad e SUNAT para enviar documentos
-        // $ws = 'https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService';
+        // $ws = 'https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService'; //ruta del servicio web de pruebad e SUNAT para enviar documentos
+        $ws = 'https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService';
         $ruta_archivo = $rutazip;
 		$nombre_archivo = $nombrezip;
 
