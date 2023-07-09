@@ -11,6 +11,7 @@
     <x-maz-sidebar-item name="Caja" icon="bi bi-cart4">
         <x-maz-sidebar-sub-item name="Nota de Crédito" :link="route('caja.nota')"></x-maz-sidebar-sub-item>
         <x-maz-sidebar-sub-item name="ventas" :link="route('caja.ventas')"></x-maz-sidebar-sub-item>
+        <x-maz-sidebar-sub-item name="Lista Ventas" :link="route('caja.list')"></x-maz-sidebar-sub-item>
     </x-maz-sidebar-item>
     {{-- <x-maz-sidebar-item name="Component" icon="bi bi-stack">
         <x-maz-sidebar-sub-item name="Accordion" :link="route('components.accordion')"></x-maz-sidebar-sub-item>
