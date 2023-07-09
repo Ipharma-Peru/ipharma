@@ -39,6 +39,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
         Route::get('/ventas', function () {
             return view('admin.caja.ventas');
         })->name('ventas');
+        Route::get('/list', function () {
+            return view('admin.caja.list');
+        })->name('list');
     });
     Route::group(['prefix' => 'inventario', 'as' => 'inventario.'], function() {
         Route::get('/products', function () {

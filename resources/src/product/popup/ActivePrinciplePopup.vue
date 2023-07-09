@@ -20,7 +20,7 @@
           ></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form @submit.prevent>
             <div class="mb-3">
               <label for="recipient-activePrinciple" class="col-form-label"
                 >Principio Activo:</label
@@ -30,7 +30,13 @@
                 class="form-control"
                 id="recipient-activePrinciple"
                 v-model="nameactivePrinciple"
+                required
+                @input="validateActivePrinciple"
+                @blur="validateActivePrinciple"
               />
+              <div class="invalid-feedback">
+                Por favor, ingresa un principio activo.
+              </div>
             </div>
           </form>
         </div>
@@ -46,7 +52,12 @@
           <button
             type="button"
             class="btn btn-primary"
-            @click="addactivePrinciple"
+            @click="
+              addactivePrinciple();
+              cerrarPopup();
+            "
+            :disabled="nameactivePrinciple === ''"
+            data-bs-dismiss="modal"
           >
             Guardar
           </button>
@@ -68,6 +79,19 @@ export default {
     };
   },
   methods: {
+    validateActivePrinciple() {
+      if (this.nameactivePrinciple === "") {
+        // El campo está vacío, se muestra el mensaje de validación
+        document
+          .getElementById("recipient-activePrinciple")
+          .classList.add("is-invalid");
+      } else {
+        // El campo tiene un valor, se quita el mensaje de validación
+        document
+          .getElementById("recipient-activePrinciple")
+          .classList.remove("is-invalid");
+      }
+    },
     cerrarPopup() {
       this.nameactivePrinciple = ""; // Reiniciar el campo de nombre del activePrinciple al cerrar el pop-up
       this.$emit("close"); // Emitir evento para indicar que se ha cerrado el pop-up
