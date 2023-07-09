@@ -5,6 +5,8 @@
     tabindex="-1"
     aria-labelledby="pharmaActionLabel"
     aria-hidden="true"
+    ref="pharmaActionModal"
+
   >
     <div class="modal-dialog">
       <div class="modal-content">
@@ -20,7 +22,7 @@
           ></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form @submit.prevent>
             <div class="mb-3">
               <label for="recipient-pharmaAction" class="col-form-label"
                 >Acción Farmacológica:</label
@@ -30,6 +32,7 @@
                 class="form-control"
                 id="recipient-pharmaAction"
                 v-model="namepharmaAction"
+                @keydown.enter="handleEnterKey"
               />
             </div>
           </form>
@@ -47,6 +50,7 @@
             type="button"
             class="btn btn-primary"
             @click="addpharmaAction"
+            :disabled="namepharmaAction === ''"
           >
             Guardar
           </button>
@@ -67,16 +71,37 @@ export default {
       namepharmaAction: "",
     };
   },
+  mounted() {
+    this.$nextTick(() => {
+      const modalElement = new bootstrap.Modal(this.$refs.pharmaActionModal);
+      modalElement._element.addEventListener("shown.bs.modal", () => {
+        this.setFocus();
+      });
+    });
+  },
   methods: {
+    setFocus() {
+      this.$nextTick(() => {
+        this.$refs.pharmaActionModal
+          .querySelector("#recipient-pharmaAction")
+          .focus();
+      });
+    },
+    handleEnterKey() {
+      if (this.namepharmaAction.length > 1) {
+        this.addpharmaAction();
+      }
+    },
     cerrarPopup() {
       this.namepharmaAction = ""; // Reiniciar el campo de nombre del pharmaAction al cerrar el pop-up
-      this.$emit("close"); // Emitir evento para indicar que se ha cerrado el pop-up
+      this.$emit("close", "pharmaAction"); // Emitir evento para indicar que se ha cerrado el pop-up
     },
     addpharmaAction() {
       axios
         .post("/api/addpharmaaction", { nombre: this.namepharmaAction })
         .then((response) => {
           if (response.data.status) {
+            this.cerrarPopup();
             Toastify({
               text: "¡Guardado!",
               duration: 3000,
