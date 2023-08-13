@@ -42,6 +42,7 @@ Route::controller(SaleController::class)->group(function() {
     Route::post('/ventas/listar', 'listarVentas');
     // Route::post('/ventas/enviarDocumento', 'enviarDocumento');
     Route::post('/ventas/listaresumen', 'listarVentasResumen');
+    Route::post('/ventas/reporteventas', 'listaVentasReportes');
 });
 
 Route::controller(InvoiceSeriesController::class)->group(function() {
