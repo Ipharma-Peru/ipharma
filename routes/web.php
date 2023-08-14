@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
+Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -32,7 +32,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
     //         return view('admin.component.accordion');
     //     })->name('accordion');
     // });
-    Route::group(['prefix' => 'caja', 'as' => 'caja.'], function() {
+    Route::group(['prefix' => 'caja', 'as' => 'caja.'], function () {
         Route::get('/nota-credito', function () {
             return view('admin.caja.nota');
         })->name('nota');
@@ -43,11 +43,17 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
             return view('admin.caja.list');
         })->name('list');
     });
-    Route::group(['prefix' => 'inventario', 'as' => 'inventario.'], function() {
+    Route::group(['prefix' => 'reportes', 'as' => 'reportes.'], function () {
+        Route::get('/ventas', function () {
+            return view('admin.reportes.list');
+        })->name('ventas');
+    });
+
+    Route::group(['prefix' => 'inventario', 'as' => 'inventario.'], function () {
         Route::get('/products', function () {
             return view('admin.inventory.products');
         })->name('products');
-         Route::get('products/{any}', function () {
+        Route::get('products/{any}', function () {
             return view('admin.inventory.products');
         })->where('any', '.*');
         Route::get('/shopping', function () {
@@ -56,8 +62,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
         Route::get('shopping/{any}', function () {
             return view('admin.inventory.shopping');
         })->where('any', '.*');
-       
-       
+
+
     });
     // Route::get('/{any}', function () {
     //     return view('blogs');

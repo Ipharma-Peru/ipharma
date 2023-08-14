@@ -5,6 +5,7 @@
     tabindex="-1"
     aria-labelledby="laboratoryLabel"
     aria-hidden="true"
+    ref="laboratoryModal"
   >
     <div class="modal-dialog">
       <div class="modal-content">
@@ -23,24 +24,24 @@
           <form>
             <div class="mb-3">
               <label for="recipient-laboratory" class="col-form-label"
-                >Código:</label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="recipient-laboratory"
-                v-model="codeLaboratory"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="recipient-laboratory" class="col-form-label"
                 >Laboratorio:</label
               >
               <input
                 type="text"
                 class="form-control"
                 id="recipient-laboratory"
+                @keydown.enter="handleEnterKey"
                 v-model="nameLaboratory"
+                @input="handleInput"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="recipient-code" class="col-form-label">Código:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="recipient-code"
+                v-model="codeLaboratory"
               />
             </div>
           </form>
@@ -54,7 +55,12 @@
           >
             Close
           </button>
-          <button type="button" class="btn btn-primary" @click="addLAboratory">
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="addLAboratory"
+            :disabled="codeLaboratory === '' || nameLaboratory === ''"
+          >
             Guardar
           </button>
         </div>
@@ -75,11 +81,35 @@ export default {
       codeLaboratory: "",
     };
   },
+  mounted() {
+    this.$nextTick(() => {
+      const modalElement = new bootstrap.Modal(this.$refs.laboratoryModal);
+      modalElement._element.addEventListener("shown.bs.modal", () => {
+        this.setFocus();
+      });
+    });
+  },
   methods: {
+    handleEnterKey() {
+      if (this.nameLaboratory.length > 1 && this.codeLaboratory.length > 1) {
+        this.addLAboratory();
+      }
+    },
+    handleInput() {
+      const inputDigits = this.nameLaboratory.slice(0, 8);
+      this.codeLaboratory = inputDigits;
+    },
+    setFocus() {
+      this.$nextTick(() => {
+        this.$refs.laboratoryModal
+          .querySelector("#recipient-laboratory")
+          .focus();
+      });
+    },
     cerrarPopup() {
       this.nameLaboratory = "";
       this.codeLaboratory = "";
-      this.$emit("close");
+      this.$emit("close", "laboratory");
     },
     addLAboratory() {
       axios
@@ -88,7 +118,8 @@ export default {
           codigo: this.codeLaboratory,
         })
         .then((response) => {
-           if (response.data.status) {
+          if (response.data.status) {
+            this.cerrarPopup();
             Toastify({
               text: "¡Guardado!",
               duration: 3000,
