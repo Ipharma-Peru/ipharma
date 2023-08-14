@@ -5,6 +5,7 @@ import './form-element-select';
 // import './productos';
 import { createApp } from "vue";
 import Ventas from "../src/ventas/Ventas.vue";
+import ReportesVentas from "../src/reportes/reportesVentas.vue";
 import ListVentas from "../src/ventas/List.vue";
 import Blog from "../src/blogs/BlogsIndex.vue";
 import Product from "../src/product/ProductsIndex.vue";
@@ -36,6 +37,7 @@ if (document.getElementById('nota')) {
     createApp(Nota).use(routerNota).mount('#nota');
 }
 if (document.getElementById('shopping')) createApp(Shopping).use(routerShopping).mount('#shopping');
+if (document.getElementById('listReportesVentas')) createApp(ReportesVentas).mount("#listReportesVentas");
 
 
 
