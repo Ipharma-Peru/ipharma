@@ -13,6 +13,9 @@
         <x-maz-sidebar-sub-item name="ventas" :link="route('caja.ventas')"></x-maz-sidebar-sub-item>
         <x-maz-sidebar-sub-item name="Lista Ventas" :link="route('caja.list')"></x-maz-sidebar-sub-item>
     </x-maz-sidebar-item>
+     <x-maz-sidebar-item name="Reportes" icon="bi bi-graph-up">
+        <x-maz-sidebar-sub-item name="Ventas" :link="route('reportes.ventas')"></x-maz-sidebar-sub-item>
+    </x-maz-sidebar-item>
     {{-- <x-maz-sidebar-item name="Component" icon="bi bi-stack">
         <x-maz-sidebar-sub-item name="Accordion" :link="route('components.accordion')"></x-maz-sidebar-sub-item>
         <x-maz-sidebar-sub-item name="Alert" :link="route('components.alert')"></x-maz-sidebar-sub-item>

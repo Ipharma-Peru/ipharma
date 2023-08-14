@@ -5,6 +5,7 @@
     tabindex="-1"
     aria-labelledby="activePrincipleLabel"
     aria-hidden="true"
+    ref="activePrincipleModal"
   >
     <div class="modal-dialog">
       <div class="modal-content">
@@ -33,6 +34,7 @@
                 required
                 @input="validateActivePrinciple"
                 @blur="validateActivePrinciple"
+                @keydown.enter="handleEnterKey"
               />
               <div class="invalid-feedback">
                 Por favor, ingresa un principio activo.
@@ -52,12 +54,8 @@
           <button
             type="button"
             class="btn btn-primary"
-            @click="
-              addactivePrinciple();
-              cerrarPopup();
-            "
+            @click="addactivePrinciple"
             :disabled="nameactivePrinciple === ''"
-            data-bs-dismiss="modal"
           >
             Guardar
           </button>
@@ -78,7 +76,31 @@ export default {
       nameactivePrinciple: "",
     };
   },
+  mounted() {
+    this.$emit("registerModal", this.openModal);
+    this.$nextTick(() => {
+      const modalElement = new bootstrap.Modal(this.$refs.activePrincipleModal);
+      modalElement._element.addEventListener("shown.bs.modal", () => {
+        this.setFocus();
+      });
+    });
+  },
+  beforeUnmount() {
+    this.$emit("unregisterModal");
+  },
   methods: {
+    handleEnterKey() {
+      if (this.nameactivePrinciple.length > 1) {
+        this.addactivePrinciple();
+      }
+    },
+    setFocus() {
+      this.$nextTick(() => {
+        this.$refs.activePrincipleModal
+          .querySelector("#recipient-activePrinciple")
+          .focus();
+      });
+    },
     validateActivePrinciple() {
       if (this.nameactivePrinciple === "") {
         // El campo está vacío, se muestra el mensaje de validación
@@ -94,12 +116,13 @@ export default {
     },
     cerrarPopup() {
       this.nameactivePrinciple = ""; // Reiniciar el campo de nombre del activePrinciple al cerrar el pop-up
-      this.$emit("close"); // Emitir evento para indicar que se ha cerrado el pop-up
+      this.$emit("close", "activePrinciple"); // Emitir evento para indicar que se ha cerrado el pop-up
     },
     addactivePrinciple() {
       axios
         .post("/api/addsubstanceactive", { nombre: this.nameactivePrinciple })
         .then((response) => {
+          this.cerrarPopup();
           if (response.data.status) {
             Toastify({
               text: "¡Guardado!",
@@ -116,6 +139,13 @@ export default {
         .catch((error) => {
           console.error("Error al agregar el activePrinciple", error);
         });
+    },
+    openModal() {
+      // Abrir el modal utilizando el ID del modal
+      const modal = new bootstrap.Modal(
+        document.getElementById("activePrinciple")
+      );
+      modal.show();
     },
   },
 };

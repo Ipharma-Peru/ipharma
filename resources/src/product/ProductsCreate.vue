@@ -90,7 +90,7 @@
                         class="form-check-input form-check-primary form-check-glow"
                         id="fraccionable"
                         v-model="formData.fraccionable"
-                         @change="clearFraccionableFields"
+                        @change="clearFraccionableFields"
                       />
                       <label class="form-check-label" for="fraccionable"
                         >Fraccionable</label
@@ -107,7 +107,6 @@
                     class="form-control"
                     id="pvpX"
                     v-model="formData.pvpx"
-                    
                   />
                 </div>
               </div>
@@ -256,8 +255,7 @@
                       <button
                         type="button"
                         class="btn btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#activePrinciple"
+                        @click="openChildModal"
                       >
                         +
                       </button>
@@ -265,7 +263,12 @@
                   </div>
                 </fieldset>
               </div>
-              <ActivePrinciplePopup @close="cerrarPopup" />
+              <ActivePrinciplePopup
+                @close="cerrarPopup"
+                ref="activePrinciplePopupRef"
+                @registerModal="registerModal"
+                @unregisterModal="unregisterModal"
+              />
               <div class="col-6">
                 <label for="accionFarmacologica" class="form-label"
                   >Acción Farmacológica</label
@@ -418,10 +421,22 @@ export default {
           console.error("Error al obtener las subclases:", error);
         });
     },
+    openChildModal() {
+      this.openModal();
+    },
+    registerModal(modalFn) {
+      this.openModal = modalFn;
+    },
+    unregisterModal() {
+      delete this.openModal;
+    },
     abrirPopup() {
       this.mostrarPopup = true;
     },
-    cerrarPopup() {
+    cerrarPopup(idPopUp) {
+      const modal = document.getElementById(idPopUp);
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      modalInstance.hide();
       this.mostrarPopup = false;
       this.fetchData();
     },
@@ -480,11 +495,11 @@ export default {
         });
     },
     clearFraccionableFields() {
-    if (!this.formData.fraccionable) {
-      this.formData.pvpFraccion = '';
-      this.formData.unidadesByCaja = '';
-    }
-  },
+      if (!this.formData.fraccionable) {
+        this.formData.pvpFraccion = "";
+        this.formData.unidadesByCaja = "";
+      }
+    },
   },
 };
 </script>
