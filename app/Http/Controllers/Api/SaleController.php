@@ -55,7 +55,6 @@ class SaleController extends Controller
 
             DB::commit();
             return ['status' => true, 'saleId' => $saleId];
-
         } catch (\Exception $e) {
             DB::rollBack();
             $errorMessage = $e->getMessage();
@@ -67,7 +66,6 @@ class SaleController extends Controller
                 'code' => $errorCode
             ];
         }
-
     }
 
     public function prepararEnvioDocumento(int $saleId, int $tipoDocumento, mixed $clientId)
@@ -111,52 +109,52 @@ class SaleController extends Controller
     {
 
         return Sale::select(
-                    'sales.id',
-                    'sales.fecha_emision',
-                    'invoice_series.serie',
-                    'sales.correlativo',
-                    'invoice_statuses.estado_facturacion',
-                    'sales.client_id',
-                    DB::raw('(SELECT SUM(cantidad * precio_unitario)
+            'sales.id',
+            'sales.fecha_emision',
+            'invoice_series.serie',
+            'sales.correlativo',
+            'invoice_statuses.estado_facturacion',
+            'sales.client_id',
+            DB::raw('(SELECT SUM(cantidad * precio_unitario)
                         FROM sale_details AS sale WHERE sale.sale_id = sales.id
                         GROUP BY sale_id) AS total')
         )
-        ->join('sale_details', 'sale_details.sale_id', '=', 'sales.id')
-        ->join('invoice_series', 'invoice_series.id', '=', 'sales.invoice_series_id')
-        ->join('invoice_types', 'invoice_types.id', '=', 'invoice_series.invoice_type_id')
-        ->leftJoin('invoice_statuses', 'invoice_statuses.sale_id', '=', 'sales.id')
-        ->whereBetween('sales.fecha_emision', [$request->fecha_inicio, $request->fecha_fin])
-        ->distinct()
-        ->get();
+            ->join('sale_details', 'sale_details.sale_id', '=', 'sales.id')
+            ->join('invoice_series', 'invoice_series.id', '=', 'sales.invoice_series_id')
+            ->join('invoice_types', 'invoice_types.id', '=', 'invoice_series.invoice_type_id')
+            ->leftJoin('invoice_statuses', 'invoice_statuses.sale_id', '=', 'sales.id')
+            ->whereBetween('sales.fecha_emision', [$request->fecha_inicio, $request->fecha_fin])
+            ->distinct()
+            ->get();
     }
 
     public function listarVentasResumen(Request $request)
     {
 
         return Sale::select(
-                    'sales.id',
-                    'sales.fecha_emision',
-                    'invoice_series.serie',
-                    'sales.correlativo',
-                    'invoice_statuses.estado_facturacion',
-                    'sales.client_id',
-                    DB::raw('(SELECT SUM(cantidad * precio_unitario)
+            'sales.id',
+            'sales.fecha_emision',
+            'invoice_series.serie',
+            'sales.correlativo',
+            'invoice_statuses.estado_facturacion',
+            'sales.client_id',
+            DB::raw('(SELECT SUM(cantidad * precio_unitario)
                         FROM sale_details AS sale WHERE sale.sale_id = sales.id
                         GROUP BY sale_id) AS total')
         )
-        ->join('sale_details', 'sale_details.sale_id', '=', 'sales.id')
-        ->join('invoice_series', 'invoice_series.id', '=', 'sales.invoice_series_id')
-        ->join('invoice_types', 'invoice_types.id', '=', 'invoice_series.invoice_type_id')
-        ->leftJoin('invoice_statuses', 'invoice_statuses.sale_id', '=', 'sales.id')
-        ->leftJoin('sale_statuses', 'sale_statuses.id', 'sales.sale_status_id')
-        ->where('sales.fecha_emision', $request->fecha)
-        ->where(function ($query) {
-            $query->where('invoice_statuses.estado_facturacion', null)
-                  ->orWhereIn('invoice_statuses.estado_facturacion', [2, 3]);
-        })
-        ->where('sale_statuses.estado', 'REGISTRADO')
-        ->distinct()
-        ->get();
+            ->join('sale_details', 'sale_details.sale_id', '=', 'sales.id')
+            ->join('invoice_series', 'invoice_series.id', '=', 'sales.invoice_series_id')
+            ->join('invoice_types', 'invoice_types.id', '=', 'invoice_series.invoice_type_id')
+            ->leftJoin('invoice_statuses', 'invoice_statuses.sale_id', '=', 'sales.id')
+            ->leftJoin('sale_statuses', 'sale_statuses.id', 'sales.sale_status_id')
+            ->where('sales.fecha_emision', $request->fecha)
+            ->where(function ($query) {
+                $query->where('invoice_statuses.estado_facturacion', null)
+                    ->orWhereIn('invoice_statuses.estado_facturacion', [2, 3]);
+            })
+            ->where('sale_statuses.estado', 'REGISTRADO')
+            ->distinct()
+            ->get();
     }
 
     public function updateStatusSale(array $status, int $saleId)
@@ -178,7 +176,7 @@ class SaleController extends Controller
 
         return array(
             'tipodoc'       => $datosVoucher->tipo_documento, //FACTURA: 01, BOLETA:03, NOTA CREDITO:07, ND: 08
-            'serie'         => $datosVoucher->serie,// //'B0P1', //F:FACTURA, B:BOLETA
+            'serie'         => $datosVoucher->serie, // //'B0P1', //F:FACTURA, B:BOLETA
             'correlativo'   => $datosVoucher->correlativo,
             'fecha_emision' => $datosVoucher->fecha_emision,
             'moneda'        => $datosVoucher->moneda, //PEN: SOLES, USD: DOLARES
@@ -187,7 +185,7 @@ class SaleController extends Controller
             'total_opinafectas'     => $datosCalculados['op_inafectas'], //
             'igv'                   => $datosCalculados['igv'],
             'total'                 => $datosCalculados['total'],
-            'total_texto'           => $numeroLetras->numtoletras($datosCalculados['total'],'SOLES')
+            'total_texto'           => $numeroLetras->numtoletras($datosCalculados['total'], 'SOLES')
         );
     }
 
@@ -200,16 +198,16 @@ class SaleController extends Controller
         $total = 0;
 
         foreach ($detalle as $k => $v) {
-            if($v['codigo_afectacion_alt']=='10'){
-            $op_gravadas = $op_gravadas + $v['valor_total'];
+            if ($v['codigo_afectacion_alt'] == '10') {
+                $op_gravadas = $op_gravadas + $v['valor_total'];
             }
 
-            if($v['codigo_afectacion_alt']=='20'){
-            $op_exoneradas = $op_exoneradas + $v['valor_total'];
+            if ($v['codigo_afectacion_alt'] == '20') {
+                $op_exoneradas = $op_exoneradas + $v['valor_total'];
             }
 
-            if($v['codigo_afectacion_alt']=='30'){
-            $op_inafectas = $op_inafectas + $v['valor_total'];
+            if ($v['codigo_afectacion_alt'] == '30') {
+                $op_inafectas = $op_inafectas + $v['valor_total'];
             }
 
             $igv = $igv + $v['igv'];
@@ -299,7 +297,6 @@ class SaleController extends Controller
             'usuario_sol'   => $data->usuario_secundario, //'MODDATOS'//Es el usuario secundario de emision electronica
             'clave_sol'     => $data->clave_secundaria, //'MODDATOS'//clave del usuario secundario de emisión
         );
-
     }
 
     public function getDatosVentaById(Request $request)
@@ -334,4 +331,8 @@ class SaleController extends Controller
         return array_merge($comprobante, ['detalles' => $detalles]);
     }
 
+    public function listaVentasReportes(Request $request)
+    {
+         return Sale::listarVentas($request->desde,$request->hasta)->get();
+    }
 }
